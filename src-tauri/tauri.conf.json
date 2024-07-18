@@ -39,5 +39,13 @@
         "icons/icon.ico"
       ]
     }
+  },
+  "plugins": {
+    "database": {
+      "base_path": null,
+      "database_filename": "data.db",
+      "database_name": "ModManagerED",
+      "database_namespace": "ModManagerData"
+    }
   }
 }
