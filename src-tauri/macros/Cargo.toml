@@ -1,0 +1,17 @@
+[package]
+name = "macros"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+proc-macro = true
+name = "macros"
+path = "src/lib.rs"
+
+[dependencies]
+syn = "2.0.71"
+quote = "1.0.36"
+proc-macro2 = "1.0.86"
+darling = "0.20.10"
+regex = "1.10.5"
+lazy_static = "1.5.0"

@@ -3,7 +3,6 @@ use anyhow::bail;
 use async_trait::async_trait;
 use serde::Deserialize;
 use surrealdb::engine::local::{Db, RocksDb};
-use surrealdb::sql::Value;
 use surrealdb::Surreal;
 use tauri::{Manager, PathResolver, Runtime};
 use tauri::plugin::{Builder, TauriPlugin};

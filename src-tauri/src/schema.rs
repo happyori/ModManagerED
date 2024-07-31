@@ -1,22 +1,32 @@
 use serde::{Deserialize, Serialize};
 use surrealdb::sql::Thing;
-#[derive(Serialize, Debug, Deserialize)]
+
+use macros::{DeriveDataModel, generate_typescript};
+
+#[derive(Serialize, Debug, Deserialize, DeriveDataModel, Clone)]
+#[generate_typescript(directory = "../src/types/generated")]
 pub struct GameInstance {
+    #[omitted]
+    #[gen(typed_as = String)]
     pub id: Thing,
-    pub path: String
+    #[required] pub path: String,
 }
 
-#[derive(Serialize, Debug, Deserialize)]
+#[derive(Serialize, Debug, Deserialize, DeriveDataModel, Clone)]
+#[generate_typescript(directory = "../src/types/generated")]
 pub struct Profile {
-    pub id: Thing,
-    pub name: String,
+    #[gen(typed_as = String)]
+    #[omitted] pub id: Thing,
+    #[required] pub name: String,
 }
 
-#[derive(Serialize, Debug, Deserialize)]
+#[derive(Serialize, Debug, Deserialize, DeriveDataModel, Clone)]
+#[generate_typescript(directory = "../src/types/generated")]
 pub struct ModInfo {
-    pub id: Thing,
-    pub deployment_path: String,
-    pub is_dll: bool,
-    pub name: String,
-    pub path: String,
+    #[gen(typed_as = String)]
+    #[omitted] pub id: Thing,
+    #[optional] pub deployment_path: String,
+    #[required] pub is_dll: bool,
+    #[required] pub name: String,
+    #[required] pub path: String,
 }

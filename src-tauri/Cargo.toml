@@ -7,6 +7,9 @@ edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
+[workspace]
+members = ["macros"]
+
 [build-dependencies]
 tauri-build = { version = "1", features = [] }
 
@@ -17,9 +20,9 @@ serde_json = "1"
 surrealdb = { version = "1.5.3", features = ["kv-rocksdb"] }
 tokio = { version = "1.38.0", features = ["macros", "rt-multi-thread"] }
 anyhow = "1.0.86"
-anyhow-tauri = "1.0.0"
 thiserror = "1.0.63"
 async-trait = "0.1.81"
+macros = { path = "./macros" }
 
 [features]
 # This feature is used for production builds or when a dev server is not specified, DO NOT REMOVE!!

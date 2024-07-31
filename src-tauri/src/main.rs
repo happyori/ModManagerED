@@ -1,19 +1,18 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
+use macros::generate_commands;
+use crate::commands::*;
+
 mod plugins;
 mod schema;
-
-// Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
-#[tauri::command]
-fn greet(name: &str) -> String {
-    format!("Hello, {}! You've been greeted from Rust!", name)
-}
+mod commands;
+pub mod manager_error;
 
 fn main() {
     tauri::Builder::default()
         .plugin(plugins::database::init())
-        .invoke_handler(tauri::generate_handler![greet])
+        .invoke_handler(generate_commands!())
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

@@ -108,16 +108,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b3d1d046238990b9cf5bcde22a3fb3584ee5cf65fb2765f454ed428c7a0063da"
 
 [[package]]
-name = "anyhow-tauri"
-version = "1.0.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b911500b8bce90dd5671a68fe4313f2c8614b9a80c8454d8d00f8721988657f9"
-dependencies = [
- "anyhow",
- "serde",
-]
-
-[[package]]
 name = "approx"
 version = "0.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2527,6 +2517,18 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c41e0c4fef86961ac6d6f8a82609f55f31b05e4fce149ac5710e439df7619ba4"
 
 [[package]]
+name = "macros"
+version = "0.1.0"
+dependencies = [
+ "darling",
+ "lazy_static",
+ "proc-macro2",
+ "quote",
+ "regex",
+ "syn 2.0.71",
+]
+
+[[package]]
 name = "malloc_buf"
 version = "0.0.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2670,8 +2672,8 @@ name = "modmanagered"
 version = "0.0.0"
 dependencies = [
  "anyhow",
- "anyhow-tauri",
  "async-trait",
+ "macros",
  "serde",
  "serde_json",
  "surrealdb",
