@@ -19,3 +19,15 @@ pub async fn create_profile(profile_data_model: ProfileDataModel, database: Stat
 
     Ok(result)
 }
+
+
+#[tauri::command]
+#[define_cmd]
+pub async fn fetch_all_profiles(database: State<'_, Database>) -> ManagerResult<Vec<Profile>> {
+    let result = database
+        .conn
+        .select("Profiles")
+        .await?;
+
+    Ok(result)
+}

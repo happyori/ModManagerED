@@ -67,7 +67,11 @@ impl PartialEq<AttrStr> for &Attribute {
 
 pub fn command_gen_impl(_item: TokenStream) -> TokenStream {
     return if let Some(map) = CMDS.lock().unwrap().take() {
+        let str_iter = map.clone();
         let iter = map.into_iter().map(|v| syn::Ident::from_string(&v).unwrap());
+        for identifier in str_iter{
+            
+        }
         (quote! {
             ::tauri::generate_handler![
                 #(#iter),*

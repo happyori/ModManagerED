@@ -9,7 +9,11 @@ const config = {
   preprocess: vitePreprocess(),
   kit: {
     adapter: adapter(),
+    alias: {
+      '$shared_types': 'types/*'
+    }
   },
+  
 };
 
 export default config;
