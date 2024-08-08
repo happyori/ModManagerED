@@ -35,9 +35,9 @@ pub fn derive_data_model(item: TokenStream) -> TokenStream {
     data_model::derive_data_model_impl(item)
 }
 
-#[proc_macro_attribute]
-pub fn generate_typescript(args: TokenStream, item: TokenStream) -> TokenStream {
-    generator::generate_typescript_impl(args, item)
+#[proc_macro_derive(GenerateTypescript, attributes(gen))]
+pub fn generate_typescript(item: TokenStream) -> TokenStream {
+    generator::generate_typescript_impl(item)
 }
 
 #[proc_macro]

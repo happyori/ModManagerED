@@ -1,12 +1,15 @@
 #[cfg(test)]
+#[allow(dead_code)]
 mod tests {
-    use macros::{generate_typescript};
-    #[generate_typescript(directory = "macros/tests/generated")]
+    use macros::{GenerateTypescript};
+    #[derive(GenerateTypescript)]
+    #[gen(directory = "macros/tests/generated")]
     struct Custom {
         yes: String,
         no: bool,
     }
-    #[generate_typescript(directory = "macros/tests/generated")]
+    #[derive(GenerateTypescript)]
+    #[gen(directory = "macros/tests/generated")]
     struct Data {
         number: f32,
         boolean: bool,

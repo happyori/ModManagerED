@@ -1,19 +1,12 @@
 use proc_macro::TokenStream;
-use std::env;
 use std::fs::File;
 use std::io::Write;
 use std::path::{absolute, PathBuf};
 
-use darling::{ast, Error, FromDeriveInput, FromField, FromMeta};
-use darling::ast::NestedMeta;
+use darling::{ast, Error, FromDeriveInput, FromField};
 use quote::quote;
 use regex::RegexBuilder;
-use syn::{GenericArgument, ItemStruct, parse_macro_input, Path, PathArguments, Type, TypePath};
-
-#[derive(Debug, FromMeta)]
-struct GeneratorArgs {
-    directory: PathBuf,
-}
+use syn::{DeriveInput, GenericArgument, parse_macro_input, Path, PathArguments, Type, TypePath};
 
 #[derive(FromField, Debug, Clone)]
 #[darling(attributes(gen))]
@@ -36,12 +29,12 @@ struct GeneratorInputReceiver {
     ident: syn::Ident,
     data: ast::Data<(), GeneratorField>,
     rename: Option<String>,
+    directory: PathBuf
 }
 
 impl ToTypescript for syn::Type {
     fn to_typescript(self) -> Result<String, Error> {
         let not_implemented_error = Error::custom("This type is not implemented yet or is incompatible with typescript");
-        println!("Converting type {:#?} to typescript", &self);
         match self {
             Type::Array(v) => { Ok(format!("{}[]", v.elem.to_typescript()?)) }
             Type::Ptr(v) => { Ok(v.elem.to_typescript()?) }
@@ -57,14 +50,11 @@ impl ToTypescript for syn::Type {
                 Ok(format!("[{inner_types}]"))
             }
             Type::Path(v) => {
-                println!("Detected path type... Converting");
                 let last_segment = v.path.segments.last().ok_or(not_implemented_error.clone())?;
                 let ident_string = last_segment.ident.to_string();
-                println!("Identifier -> {ident_string}");
 
                 // Handle Vectors
                 if ident_string == "Vec" && !last_segment.arguments.is_empty() {
-                    println!("Detected Vector");
                     return match &last_segment.arguments {
                         PathArguments::AngleBracketed(pargs) => {
                             let inner_type = pargs
@@ -100,7 +90,6 @@ impl ToTypescript for syn::Type {
                     return Ok("boolean".to_string());
                 }
 
-                println!("Failed to recognize type proceeding with passing");
                 Ok(ident_string)
             }
             Type::ImplTrait(_) => Err(not_implemented_error),
@@ -138,7 +127,8 @@ impl ToTypescript for GeneratorInputReceiver {
         let Self {
             ident,
             data,
-            rename
+            rename,
+            ..
         } = self;
         let name = rename.unwrap_or(ident.to_string());
         let fields = data.take_struct().expect("Should never be enum").fields;
@@ -187,25 +177,14 @@ trait ToTypescript {
     fn to_typescript(self) -> Result<String, Error>;
 }
 
-// TODO: Find how to "flatten" types
-pub(crate) fn generate_typescript_impl(args: TokenStream, input: TokenStream) -> TokenStream {
-    let attr_args = match NestedMeta::parse_meta_list(args.into()) {
-        Ok(v) => v,
-        Err(e) => { return TokenStream::from(Error::from(e).write_errors()); }
-    };
-    let GeneratorArgs { directory } = match GeneratorArgs::from_list(&attr_args) {
-        Ok(v) => v,
-        Err(e) => { return TokenStream::from(e.write_errors()); }
-    };
-    let derive_input = parse_macro_input!(input as ItemStruct).into();
+pub(crate) fn generate_typescript_impl(input: TokenStream) -> TokenStream {
+    let derive_input = parse_macro_input!(input as DeriveInput);
     let generator_input = match GeneratorInputReceiver::from_derive_input(&derive_input) {
         Ok(v) => v,
         Err(e) => { return TokenStream::from(e.write_errors()); }
     };
-    let output_dir = absolute(directory).expect("Output directory should be absolute");
-    dbg!(&output_dir);
+    let output_dir = absolute(generator_input.directory.clone()).expect("Output directory should be absolute");
     let path = output_dir.join(generator_input.name() + ".ts");
-    dbg!(&path);
 
     let mut file = match File::create(path) {
         Ok(v) => v,
@@ -220,9 +199,6 @@ pub(crate) fn generate_typescript_impl(args: TokenStream, input: TokenStream) ->
         return TokenStream::from(Error::custom(e).write_errors());
     }
 
-    let result = quote! {
-        #derive_input
-    };
-
+    let result = quote! {};
     result.into()
 }
