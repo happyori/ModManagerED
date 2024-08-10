@@ -1,5 +1,5 @@
 
-export interface GameInstance {
+export type GameInstance = {
     id: string;
     path: string;
 }

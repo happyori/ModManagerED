@@ -1,5 +1,5 @@
 
-export interface ModInfo {
+export type ModInfo = {
     id: string;
     deployment_path: string;
     is_dll: boolean;

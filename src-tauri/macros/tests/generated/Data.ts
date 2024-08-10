@@ -1,5 +1,5 @@
 import type { Custom } from './Custom';
-export interface Data {
+export type Data = {
     number: number;
     boolean: boolean;
     string: string;

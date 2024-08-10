@@ -1,0 +1,12 @@
+[package]
+name = "utility"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+path = "src/lib.rs"
+
+[dependencies]
+syn = "2.0.72"
+anyhow = "1.0.86"
+regex = "1.10.6"

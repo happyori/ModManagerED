@@ -10,7 +10,7 @@ const config = {
   kit: {
     adapter: adapter(),
     alias: {
-      '$shared_types': 'types/*'
+      '$generated': 'src/generated/*'
     }
   },
   

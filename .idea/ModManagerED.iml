@@ -5,6 +5,7 @@
       <sourceFolder url="file://$MODULE_DIR$/src-tauri/macros/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src-tauri/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src-tauri/macros/tests" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/src-tauri/utility/src" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/src-tauri/macros/target" />
       <excludeFolder url="file://$MODULE_DIR$/src-tauri/target" />
     </content>

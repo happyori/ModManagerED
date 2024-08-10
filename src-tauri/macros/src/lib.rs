@@ -14,7 +14,7 @@ pub(crate) mod command_gen;
 /// Attribute omitted: removes the field from DataModel
 ///
 /// Example:
-/// ```rust
+/// ```no_run
 /// use macros::DeriveDataModel;
 /// #[derive(DeriveDataModel)]
 /// pub struct User {
@@ -23,12 +23,13 @@ pub(crate) mod command_gen;
 ///   #[optional] pub username: String,
 /// }
 ///
-/// // EXPANDED
-/// #[derive(serde::Serialize, serde::Deserialize, Debug)]
-/// pub struct UserDataModel {
+/// /* Expands into the following
+///  #[derive(serde::Serialize, serde::Deserialize, Debug)]
+///  pub struct UserDataModel {
 ///   pub name: String,
 ///   pub username: Option<String>,
-/// }
+///  }
+/// */
 /// ```
 #[proc_macro_derive(DeriveDataModel, attributes(required, optional, omitted))]
 pub fn derive_data_model(item: TokenStream) -> TokenStream {

@@ -1,11 +1,15 @@
 use std::path::PathBuf;
-use anyhow::bail;
+
+use anyhow::{bail, Result};
 use async_trait::async_trait;
 use serde::Deserialize;
 use surrealdb::engine::local::{Db, RocksDb};
+use surrealdb::opt::auth::Root;
+use surrealdb::opt::Config;
 use surrealdb::Surreal;
 use tauri::{Manager, PathResolver, Runtime};
 use tauri::plugin::{Builder, TauriPlugin};
+
 use crate::plugins::database_trait::DatabaseTrait;
 use crate::schema::{ModInfo, Profile};
 
@@ -14,15 +18,21 @@ pub(crate) struct Database {
     pub conn: Surreal<Db>,
 }
 
+const ROOT: Root = Root {
+    username: "root",
+    password: "root"
+};
+
 #[async_trait]
 impl DatabaseTrait for Database {
-    async fn get_active_mods(&self, profile: &Profile) -> anyhow::Result<Vec<ModInfo>> {
+    async fn get_active_mods(&self, profile: &Profile) -> Result<Vec<ModInfo>> {
         const ACTIVE_MODS_QUERY: &'static str = "\
             SELECT VALUE ->ProfileMods->ModInfos.*
             FROM ONLY $profile;
         ";
 
-        let response = self.conn
+        let response = self
+            .conn
             .query(ACTIVE_MODS_QUERY)
             .bind(("profile", profile.id.clone()))
             .await?
@@ -30,12 +40,13 @@ impl DatabaseTrait for Database {
         Ok(response)
     }
 
-    async fn enable_mod(&self, profile: &Profile, mod_info: &ModInfo) -> anyhow::Result<()> {
+    async fn enable_mod(&self, profile: &Profile, mod_info: &ModInfo) -> Result<()> {
         const CHECK_RELATION: &'static str = "\
             array::any((SELECT id FROM ProfileMods WHERE out = $mod_info AND in = $profile));
         ";
         const RELATE_MOD: &'static str = "RELATE $profile -> ProfileMods -> $mod_info";
-        let relation_exists: Option<bool> = self.conn
+        let relation_exists: Option<bool> = self
+            .conn
             .query(CHECK_RELATION)
             .bind(("mod_info", mod_info.id.clone()))
             .bind(("profile", profile.id.clone()))
@@ -54,7 +65,7 @@ impl DatabaseTrait for Database {
         Ok(())
     }
 
-    async fn disable_mod(&self, profile: &Profile, mod_info: &ModInfo) -> anyhow::Result<()> {
+    async fn disable_mod(&self, profile: &Profile, mod_info: &ModInfo) -> Result<()> {
         self.conn
             .query("DELETE $profile->ProfileMods WHERE out=$mod_info")
             .bind(("profile", profile.id.clone()))
@@ -81,7 +92,7 @@ pub fn init<R: Runtime>() -> TauriPlugin<R, DatabaseConfig> {
             tauri::async_runtime::spawn(async move {
                 let db_conn = create_db_connection(db_path, config)
                     .await
-                    .expect("failed to setup database");
+                    .expect("Database should have been setup");
                 handle.manage(Database { conn: db_conn });
             });
             Ok(())
@@ -96,14 +107,32 @@ fn get_db_path(path_resolver: PathResolver, config: &DatabaseConfig) -> PathBuf 
         .or(path_resolver.app_data_dir())
         .or(path_resolver.app_cache_dir())
         .expect("failed to obtain app data or app cache directory...");
-    println!("Selected path for db [{base:#?} + {:#?}]", &config.database_filename);
+    println!(
+        "Selected path for db [{base:#?} + {:#?}]",
+        &config.database_filename
+    );
     base.join(config.database_filename)
 }
 
-async fn create_db_connection(path: PathBuf, config: DatabaseConfig) -> anyhow::Result<Surreal<Db>> {
-    let conn = Surreal::new::<RocksDb>(path).await?;
+async fn create_db_connection(
+    path: PathBuf,
+    config: DatabaseConfig,
+) -> Result<Surreal<Db>> {
+    println!(
+        "Creating DB connection to {:#?} with: \n{:#?}",
+        &path, &config
+    );
+    let conf = Config::default().user(ROOT);
+    let conn = Surreal::new::<RocksDb>((path, conf)).await?;
+    conn.signin(Root {
+        username: "root",
+        password: "root",
+    })
+    .await?;
 
-    conn.use_ns(config.database_namespace).use_db(config.database_name).await?;
+    conn.use_ns(config.database_namespace)
+        .use_db(config.database_name)
+        .await?;
 
     Ok(conn)
 }
