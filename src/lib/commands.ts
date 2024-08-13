@@ -8,7 +8,10 @@ const Commands = {
 	FetchAllMods: 'fetch_all_mods',
 	// Profile
 	CreateProfile: 'create_profile',
-	FetchAllProfiles: 'fetch_all_profiles'
+	FetchAllProfiles: 'fetch_all_profiles',
+	EnableMod: 'enable_mod',
+	DisableMod: 'disable_mod',
+	GetActiveMods: 'get_active_mods'
 };
 
 export default Commands;

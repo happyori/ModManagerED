@@ -9,9 +9,9 @@ use surrealdb::opt::Config;
 use surrealdb::Surreal;
 use tauri::{Manager, PathResolver, Runtime};
 use tauri::plugin::{Builder, TauriPlugin};
-
+use crate::database_id::DbID;
 use crate::plugins::database_trait::DatabaseTrait;
-use crate::schema::{ModInfo, Profile};
+use crate::schema::ModInfo;
 
 #[derive(Debug)]
 pub(crate) struct Database {
@@ -25,8 +25,8 @@ const ROOT: Root = Root {
 
 #[async_trait]
 impl DatabaseTrait for Database {
-    async fn get_active_mods(&self, profile: &Profile) -> Result<Vec<ModInfo>> {
-        const ACTIVE_MODS_QUERY: &'static str = "\
+    async fn get_active_mods(&self, profile: DbID) -> Result<Vec<ModInfo>> {
+        const ACTIVE_MODS_QUERY: &str = "\
             SELECT VALUE ->ProfileMods->ModInfos.*
             FROM ONLY $profile;
         ";
@@ -34,22 +34,22 @@ impl DatabaseTrait for Database {
         let response = self
             .conn
             .query(ACTIVE_MODS_QUERY)
-            .bind(("profile", profile.id.clone()))
+            .bind(("profile", profile.0))
             .await?
             .take(0)?;
         Ok(response)
     }
 
-    async fn enable_mod(&self, profile: &Profile, mod_info: &ModInfo) -> Result<()> {
-        const CHECK_RELATION: &'static str = "\
+    async fn enable_mod(&self, profile: DbID, mod_info: DbID) -> Result<()> {
+        const CHECK_RELATION: &str = "\
             array::any((SELECT id FROM ProfileMods WHERE out = $mod_info AND in = $profile));
         ";
-        const RELATE_MOD: &'static str = "RELATE $profile -> ProfileMods -> $mod_info";
+        const RELATE_MOD: &str = "RELATE $profile -> ProfileMods -> $mod_info";
         let relation_exists: Option<bool> = self
             .conn
             .query(CHECK_RELATION)
-            .bind(("mod_info", mod_info.id.clone()))
-            .bind(("profile", profile.id.clone()))
+            .bind(("mod_info", mod_info.0.clone()))
+            .bind(("profile", profile.0.clone()))
             .await?
             .take(0)?;
         if relation_exists.unwrap_or(false) {
@@ -58,18 +58,18 @@ impl DatabaseTrait for Database {
 
         self.conn
             .query(RELATE_MOD)
-            .bind(("profile", profile.id.clone()))
-            .bind(("mod_info", mod_info.id.clone()))
+            .bind(("profile", profile.0))
+            .bind(("mod_info", mod_info.0))
             .await?;
 
         Ok(())
     }
 
-    async fn disable_mod(&self, profile: &Profile, mod_info: &ModInfo) -> Result<()> {
+    async fn disable_mod(&self, profile: DbID, mod_info: DbID) -> Result<()> {
         self.conn
             .query("DELETE $profile->ProfileMods WHERE out=$mod_info")
-            .bind(("profile", profile.id.clone()))
-            .bind(("mod_info", mod_info.id.clone()))
+            .bind(("profile", profile.0))
+            .bind(("mod_info", mod_info.0))
             .await?;
 
         Ok(())

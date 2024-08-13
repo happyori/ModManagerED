@@ -8,6 +8,7 @@ mod plugins;
 mod schema;
 mod commands;
 pub mod manager_error;
+mod database_id;
 
 fn main() {
     tauri::Builder::default()

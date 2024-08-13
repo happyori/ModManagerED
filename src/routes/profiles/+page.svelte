@@ -6,9 +6,8 @@
 	let profiles = data.profiles;
 </script>
 
-{@debug profiles}
 <main class="pt-5 pl-2 flex flex-grow flex-col">
-	{#each profiles as { name, id }}
+	{#each profiles as { name, id } (id)}
 		<a
 			href="/profiles/{id}"
 			class="bg-zinc-700 m-2 rounded px-5 py-2

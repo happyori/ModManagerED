@@ -15,6 +15,14 @@
       "shell": {
         "all": false,
         "open": true
+      },
+      "dialog": {
+        "all": false,
+        "ask": false,
+        "confirm": false,
+        "message": false,
+        "open": true,
+        "save": false
       }
     },
     "windows": [
@@ -42,7 +50,7 @@
   },
   "plugins": {
     "database": {
-      "base_path": null,
+      "base_path": "C:\\Projects\\ModManagerED",
       "database_filename": "data.db",
       "database_name": "ModManagerED",
       "database_namespace": "ModManagerData"

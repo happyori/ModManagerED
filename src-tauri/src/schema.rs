@@ -1,18 +1,31 @@
-use serde::{Deserialize, Serialize, Serializer};
-use surrealdb::sql::Thing;
-
+use serde::{Deserialize, Serialize};
+use surrealdb::opt::{IntoResource, Resource};
 use macros::{DeriveDataModel, GenerateTypescript};
+use crate::database_id::DbID;
 
-#[derive(Debug, Deserialize, Clone)]
-pub struct DbID(Thing);
-
-impl Serialize for DbID {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: Serializer
-    {
-        serializer.serialize_str(&self.0.to_raw())
-    }
+macro_rules! impl_into_resource {
+    ($srct: ident) => {
+        impl From<$srct> for Resource {
+            fn from(value: $srct) -> Self {
+                value.id.into()
+            }
+        }
+        impl From<&$srct> for Resource {
+            fn from(value: &$srct) -> Self {
+                value.id.as_ref().into()
+            }
+        }
+        impl IntoResource<Option<$srct>> for $srct {
+            fn into_resource(self) -> surrealdb::Result<Resource> {
+                Ok(self.id.into())
+            }
+        }
+        impl IntoResource<Option<$srct>> for &$srct {
+            fn into_resource(self) -> surrealdb::Result<Resource> {
+                Ok(self.id.as_ref().into())
+            }
+        }
+    };
 }
 
 #[derive(Serialize, Debug, Deserialize, DeriveDataModel, Clone, GenerateTypescript)]
@@ -42,7 +55,7 @@ pub struct ModInfo {
     #[omitted]
     pub id: DbID,
     #[optional]
-    pub deployment_path: String,
+    pub deployment_path: Option<String>,
     #[required]
     pub is_dll: bool,
     #[required]
@@ -50,3 +63,7 @@ pub struct ModInfo {
     #[required]
     pub path: String,
 }
+
+impl_into_resource!(GameInstance);
+impl_into_resource!(ModInfo);
+impl_into_resource!(Profile);

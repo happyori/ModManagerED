@@ -1,16 +1,27 @@
 <script lang="ts">
-	import { ProfileStore } from '$lib/stores/profiles';
+	import { findProfileById, ProfileStore } from '$lib/stores/profiles';
 	import type { PageData } from '../[id]/$types';
+	import { melt, createLabel } from '@melt-ui/svelte';
 
 	export let data: PageData;
 
-	const profile = $ProfileStore.find((p) => p.id === data.id);
+	const {
+		elements: { root }
+	} = createLabel();
+
+	const profile = findProfileById($ProfileStore, data.id);
 </script>
 
 {#if profile}
 	<main class="grid grid-cols-8 grid-rows-4 m-4 gap-2 items-center">
-		<h1 class="col-span-4 text-lg">Profile Name:</h1>
+		<label
+			use:melt={$root}
+			class="col-span-4 text-lg"
+			for="name">
+			Profile Name:
+		</label>
 		<input
+			id="name"
 			class="font-bold ml-2 bg-transparent col-span-6 outline outline-2 outline-royal-indigo-400 rounded px-5 py-2"
 			bind:value={profile.name} />
 		<div class="row-start-2 -col-start-1 col-span-3 p-2 flex flex-row gap-2 justify-around">

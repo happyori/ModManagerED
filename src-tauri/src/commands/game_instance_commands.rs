@@ -1,5 +1,4 @@
 use anyhow::anyhow;
-use surrealdb::sql::Thing;
 use tauri::State;
 use macros::define_cmd;
 use crate::generic;
@@ -41,16 +40,23 @@ pub async fn fetch_all_game_instances(
 #[tauri::command]
 #[define_cmd]
 pub async fn update_game_instance(
-    id: Thing,
-    data: GameInstanceDataModel,
+    game_instance: GameInstance,
     database: State<'_, Database>,
 ) -> ManagerResult<GameInstance> {
+    let error = anyhow!("Failed to update game instance with id {:#?}", &game_instance.id);
     let result = database
         .conn
-        .update(id.clone())
-        .content(data)
+        .update(&game_instance)
+        .content(game_instance)
         .await?
-        .ok_or(anyhow!("Failed to update game instance with id {id:#?}"))?;
+        .ok_or(error)?;
 
     Ok(result)
+}
+
+#[tauri::command]
+#[define_cmd]
+pub async fn reset_game_instance() ->  {
+    
+    todo!()
 }

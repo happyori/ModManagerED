@@ -12,13 +12,17 @@
 		"tauri": "tauri",
 		"tauri-dev": "tauri dev",
 		"format": "prettier --write .",
-		"lint": "prettier --check ."
+		"lint": "prettier --check .",
+		"surreal-start": "surreal start --log debug --user root --pass root --bind 0.0.0.0:8080 file:data.db"
 	},
 	"license": "The Fight Club License",
 	"dependencies": {
 		"@tauri-apps/api": "^1"
 	},
 	"devDependencies": {
+		"@iconify/svelte": "^4.0.2",
+		"@melt-ui/pp": "^0.3.2",
+		"@melt-ui/svelte": "^0.83.0",
 		"@sveltejs/adapter-static": "^3.0.1",
 		"@sveltejs/enhanced-img": "^0.3.1",
 		"@sveltejs/kit": "^2.0.0",
@@ -26,11 +30,13 @@
 		"@tailwindcss/typography": "^0.5.13",
 		"@tauri-apps/cli": "^1",
 		"autoprefixer": "^10.4.19",
+		"clsx": "2.1.1",
 		"postcss": "^8.4.38",
 		"prettier": "^3.3.2",
 		"prettier-plugin-svelte": "^3.2.5",
 		"svelte": "^4.2.7",
 		"svelte-check": "^3.6.0",
+		"tailwind-merge": "2.4.0",
 		"tailwindcss": "^3.4.4",
 		"tslib": "^2.4.1",
 		"typescript": "^5.0.0",
