@@ -1,7 +1,7 @@
 <script lang="ts">
 	import Commands from '$lib/commands';
 	import { tauri } from '@tauri-apps/api';
-	import { goto } from '$app/navigation';
+	import { goto, invalidate } from '$app/navigation';
 
 	let profile_name = '';
 
@@ -11,7 +11,8 @@
 				return console.error('Profile name needs to be set');
 			}
 			await tauri.invoke(Commands.CreateProfile, { profileDataModel: { name: profile_name } });
-			goto('/profiles');
+			await invalidate('profiles:data');
+			await goto('/profiles');
 		} catch (e) {
 			console.error(e);
 		}

@@ -1,6 +1,8 @@
 use serde::{Deserialize, Serialize};
 use surrealdb::opt::{IntoResource, Resource};
+
 use macros::{DeriveDataModel, GenerateTypescript};
+
 use crate::database_id::DbID;
 
 macro_rules! impl_into_resource {
@@ -34,8 +36,9 @@ pub struct GameInstance {
     #[omitted]
     #[gen(typed_as = String)]
     pub id: DbID,
-    #[required]
+    #[optional]
     pub path: String,
+    pub mod_engine_path: Option<String>
 }
 
 #[derive(Serialize, Debug, Deserialize, DeriveDataModel, Clone, GenerateTypescript)]

@@ -1,27 +1,22 @@
 use std::path::PathBuf;
 
-use anyhow::{bail, Result};
+use anyhow::{anyhow, bail, Result};
 use async_trait::async_trait;
 use serde::Deserialize;
 use surrealdb::engine::local::{Db, RocksDb};
-use surrealdb::opt::auth::Root;
 use surrealdb::opt::Config;
 use surrealdb::Surreal;
 use tauri::{Manager, PathResolver, Runtime};
 use tauri::plugin::{Builder, TauriPlugin};
+
 use crate::database_id::DbID;
 use crate::plugins::database_trait::DatabaseTrait;
-use crate::schema::ModInfo;
+use crate::schema::{GameInstance, ModInfo};
 
 #[derive(Debug)]
 pub(crate) struct Database {
     pub conn: Surreal<Db>,
 }
-
-const ROOT: Root = Root {
-    username: "root",
-    password: "root"
-};
 
 #[async_trait]
 impl DatabaseTrait for Database {
@@ -74,6 +69,16 @@ impl DatabaseTrait for Database {
 
         Ok(())
     }
+
+    async fn get_instance(&self) -> Result<GameInstance> {
+        let result = self
+            .conn
+            .select(("GameInstances", "main"))
+            .await?
+            .ok_or(anyhow!("Could not retrieve main instance"))?;
+
+        Ok(result)
+    }
 }
 
 #[derive(Deserialize, Clone, Debug)]
@@ -93,6 +98,7 @@ pub fn init<R: Runtime>() -> TauriPlugin<R, DatabaseConfig> {
                 let db_conn = create_db_connection(db_path, config)
                     .await
                     .expect("Database should have been setup");
+                define_upsert(&db_conn).await.expect("Defining Upsert should succeed");
                 handle.manage(Database { conn: db_conn });
             });
             Ok(())
@@ -122,17 +128,34 @@ async fn create_db_connection(
         "Creating DB connection to {:#?} with: \n{:#?}",
         &path, &config
     );
-    let conf = Config::default().user(ROOT);
+    let conf = Config::default();
     let conn = Surreal::new::<RocksDb>((path, conf)).await?;
-    conn.signin(Root {
-        username: "root",
-        password: "root",
-    })
-    .await?;
 
     conn.use_ns(config.database_namespace)
         .use_db(config.database_name)
         .await?;
 
     Ok(conn)
+}
+
+async fn define_upsert(
+    conn: &Surreal<Db>
+) -> Result<()> {
+    const DEFINE_QUERY: &str = r"
+    DEFINE FUNCTION fn::upsert($rec: record, $data: any) {
+        LET $id = meta::id($rec);
+        LET $tbl = meta::tb($rec);
+        LET $exists = !!(SELECT * FROM ONLY type::thing($tbl, $id));
+        RETURN IF $exists {
+            RETURN UPDATE type::thing($tbl, $id) CONTENT $data RETURN AFTER;
+        } ELSE {
+            RETURN CREATE type::thing($tbl, $id) CONTENT $data RETURN AFTER;
+        }
+    }
+    ";
+
+    conn.query(DEFINE_QUERY)
+        .await?;
+
+    Ok(())
 }

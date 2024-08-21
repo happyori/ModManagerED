@@ -33,7 +33,7 @@
 		}
 	};
 
-	type Info = Omit<ModInfo, 'id' | 'deployment_path'> & Partial<Pick<ModInfo, 'deployment_path'>>;
+	type Info = Omit<ModInfo, 'id'>;
 
 	let info: Info = {
 		path: '',

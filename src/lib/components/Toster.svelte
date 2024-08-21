@@ -3,14 +3,16 @@
 	context="module">
 	export type ToastData = {
 		title: string;
-		content: string;
+		content?: string;
 		type: ToastType;
 	};
 	export const ToasterContext = 'toaster';
 	export type ToasterContextReturn = {
 		addToast: ReturnType<typeof createToaster<ToastData>>['helpers']['addToast'];
+		addSuccessfulToast: (title: string, content?: string) => Toast<ToastData>;
+		addFailedToast: (title: string, content?: string) => Toast<ToastData>;
 	};
-	type ToastType = 'error' | 'info' | 'warning';
+	type ToastType = 'error' | 'info' | 'warning' | 'success';
 	const getColor = (type: ToastType) => {
 		switch (type) {
 			default:
@@ -20,12 +22,14 @@
 				return 'bg-blue-500';
 			case 'warning':
 				return 'bg-orange-500';
+			case 'success':
+				return 'bg-green-500';
 		}
 	};
 </script>
 
 <script lang="ts">
-	import { createToaster, melt } from '@melt-ui/svelte';
+	import { createToaster, melt, type Toast } from '@melt-ui/svelte';
 	import { setContext } from 'svelte';
 	import { flip } from 'svelte/animate';
 	import { fly } from 'svelte/transition';
@@ -37,8 +41,30 @@
 		states: { toasts }
 	} = createToaster<ToastData>();
 
+	const addSuccessfulToast = (title: string, content?: string) => {
+		return addToast({
+			data: {
+				title,
+				content,
+				type: 'success'
+			}
+		});
+	};
+
+	const addFailedToast = (title: string, content?: string) => {
+		return addToast({
+			data: {
+				title,
+				content,
+				type: 'error'
+			}
+		});
+	};
+
 	setContext(ToasterContext, {
-		addToast
+		addToast,
+		addFailedToast,
+		addSuccessfulToast
 	});
 </script>
 
@@ -61,7 +87,7 @@
 						<span class="size-1.5 rounded-full inline-block {getColor(data.type)}" />
 						{data.title}
 					</h3>
-					<div use:melt={$description(id)}>{data.content}</div>
+					<div use:melt={$description(id)}>{data.content || ''}</div>
 				</section>
 				<button
 					use:melt={$close(id)}

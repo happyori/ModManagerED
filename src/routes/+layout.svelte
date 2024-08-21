@@ -1,7 +1,10 @@
-<script>
+<script lang="ts">
 	import ProfileSelector from '$lib/components/ProfileSelector.svelte';
 	import Toster from '$lib/components/Toster.svelte';
 	import '../app.css';
+	import type { LayoutData } from './$types';
+
+	export let data: LayoutData;
 </script>
 
 <Toster>
@@ -13,7 +16,7 @@
 				src="$lib/assets/eldenringlogo.png?w=100"
 				class="mb-4"
 				alt="Golden Order Logo" />
-			<ProfileSelector />
+			<ProfileSelector {...data} />
 		</div>
 		<div class="col-start-4 col-end-13 flex flex-col w-full">
 			<div class="flex flex-row justify-between w-full h-24 align-middle bg-zinc-800">
@@ -25,16 +28,23 @@
 		</div>
 
 		<nav
-			class="row-span-10 row-start-4 col-span-3 max-w-fit h-auto bg-zinc-800 gap-2 pt-5 pr-20 flex flex-col *:ml-2 *:mr-6">
+			class="row-span-10 row-start-4 col-span-3 max-w-fit h-auto bg-zinc-800 gap-2 pt-5 pr-20 flex flex-col justify-between">
+			<div class="*:ml-2 *:mr-6 flex flex-col">
+				<a
+					class="text-white p-2"
+					href="/profiles">
+					Profiles
+				</a>
+				<a
+					class="text-white p-2"
+					href="/mods">
+					Mods
+				</a>
+			</div>
 			<a
-				class="text-white p-2"
-				href="/profiles">
-				Profiles
-			</a>
-			<a
-				class="text-white p-2"
-				href="/mods">
-				Mods
+				href="/settings"
+				class="text-white p-2 ml-2 mr-4">
+				Settings
 			</a>
 		</nav>
 		<div class="row-start-2 row-span-10 col-start-4 col-span-12 w-full h-full">

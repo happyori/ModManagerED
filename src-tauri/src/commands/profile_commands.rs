@@ -1,10 +1,13 @@
 use anyhow::anyhow;
-use tauri::State;
+use tauri::{AppHandle, State};
+
 use macros::define_cmd;
+
 use crate::database_id::DbID;
 use crate::manager_error::ManagerResult;
 use crate::plugins::database::Database;
 use crate::plugins::database_trait::DatabaseTrait;
+use crate::plugins::modengine_manager::ModEngineManager;
 use crate::schema::{ModInfo, Profile, ProfileDataModel};
 
 #[tauri::command]
@@ -35,7 +38,7 @@ pub async fn update_profile(
     let result = database
         .conn
         .update(&profile)
-        .content(profile)
+        .content(Into::<ProfileDataModel>::into(profile))
         .await?
         .ok_or(anyhow!("Failed to update profile"))?;
 
@@ -87,4 +90,13 @@ pub async fn disable_mod(profile_id: DbID, mod_id: DbID, database: State<'_, Dat
 pub async fn get_active_mods(profile_id: DbID, database: State<'_, Database>) -> ManagerResult<Vec<ModInfo>> {
     let result = database.get_active_mods(profile_id).await?;
     Ok(result)
+}
+
+#[tauri::command]
+#[define_cmd]
+pub async fn launch_game(profile: Profile, database: State<'_, Database>, app_handle: AppHandle) -> ManagerResult<()> {
+    println!("Launching Game");
+    ModEngineManager::launch_modded(&profile, &database, app_handle.path_resolver()).await?;
+
+    Ok(())
 }

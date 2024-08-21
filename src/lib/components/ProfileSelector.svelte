@@ -1,12 +1,3 @@
-<script
-	lang="ts"
-	context="module">
-	import { ProfileStore, SelectedProfile } from '$lib/stores/profiles';
-	import { createSelect, createSeparator, melt } from '@melt-ui/svelte';
-
-	let profilePromise = ProfileStore.fetchAllMods();
-</script>
-
 <script lang="ts">
 	import type { Profile } from '$generated/Profile';
 	import Icon from '@iconify/svelte';
@@ -14,6 +5,13 @@
 	import { tweened } from 'svelte/motion';
 	import { cubicInOut } from 'svelte/easing';
 	import { cn } from '$lib/utilities/cn';
+	import { ProfileStore, SelectedProfile } from '$lib/stores/profiles';
+	import { createSelect, createSeparator, melt } from '@melt-ui/svelte';
+	import Commands from '$lib/commands';
+	import { getContext } from 'svelte';
+	import { ToasterContext, type ToasterContextReturn } from './Toster.svelte';
+
+	const { addSuccessfulToast, addFailedToast } = getContext<ToasterContextReturn>(ToasterContext);
 
 	const {
 		elements: { menu, trigger, option },
@@ -29,6 +27,8 @@
 		disabled: $ProfileStore.length === 0
 	});
 
+	export let profiles: Profile[];
+
 	$: SelectedProfile.set($selected?.value);
 	$: disabled.set($ProfileStore.length === 0);
 
@@ -43,7 +43,19 @@
 		elements: { root: separator }
 	} = createSeparator({ decorative: true, orientation: 'vertical' });
 
-	const handlePlayClicked = () => {};
+	const handlePlayClicked = async () => {
+		const tauri = await import('@tauri-apps/api');
+		try {
+			if ($SelectedProfile == undefined) {
+				addFailedToast('No profile selected, how did you even do this???');
+				return;
+			}
+			await tauri.invoke(Commands.LaunchGame, { profile: $SelectedProfile });
+			addSuccessfulToast('Game launching...');
+		} catch (e) {
+			addFailedToast('Failed to launch!', `${e}`);
+		}
+	};
 </script>
 
 <div class={cn('flex bg-green-700 rounded pr-1 items-center transition-colors', rounded)}>
@@ -72,22 +84,23 @@
 				transition:fade={{ duration: 150 }}
 				use:melt={$menu}
 				class="z-10 flex max-h-[300px] px-0 pb-2 space-y-0.5 bg-green-700 flex-col overflow-y-auto rounded-lg rounded-t-none shadow">
-				{#await profilePromise then profiles}
-					{#each profiles as profile (profile.id)}
-						<span
-							use:melt={$option({ value: profile, label: profile.name })}
-							class="text-white text-sm tracking-tight leading-tight cursor-pointer hover:bg-green-800 px-2 py-1">
-							{profile.name}
-						</span>
-					{/each}
-				{/await}
+				{#each profiles as profile (profile.id)}
+					<span
+						use:melt={$option({ value: profile, label: profile.name })}
+						class="text-white text-sm tracking-tight leading-tight cursor-pointer hover:bg-green-800 px-2 py-1">
+						{profile.name}
+					</span>
+				{/each}
 			</div>
 		{/if}
 	</div>
 	<span
 		use:melt={$separator}
 		class="bg-green-800 w-[3px] h-[80%]" />
-	<button on:click={handlePlayClicked}>
+	<button
+		on:click={handlePlayClicked}
+		disabled={$SelectedProfile == undefined}
+		class="disabled:cursor-not-allowed">
 		<Icon icon="ant-design:caret-right-outlined" />
 	</button>
 </div>

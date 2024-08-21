@@ -1,0 +1,24 @@
+[2024-08-20 16:20:41.223] [modengine] [info] Attempting to load global config at C:\Projects\ModManagerED\src-tauri\modengine\modengine2\config.toml
+[2024-08-20 16:20:41.223] [modengine] [info] Attempting to load mod settings config at C:\Projects\ModManagerED\src-tauri\modengine\config_eldenring.toml
+[2024-08-20 16:20:41.223] [modengine] [info] Local config loaded
+[2024-08-20 16:20:41.223] [modengine] [info] ModEngine version 2.1.0-0924ab36f1311bf84e7e626740b4bf2c0d54909a initializing for Elden Ring
+[2024-08-20 16:20:41.223] [modengine] [info] Local settings loaded: true, Global settings loaded: false
+[2024-08-20 16:20:41.224] [modengine] [info] Main thread ID: 38756
+[2024-08-20 16:20:41.225] [modengine] [info] Enabling extension base
+[2024-08-20 16:20:41.225] [modengine] [info] Enabled extension base
+[2024-08-20 16:20:41.225] [modengine] [info] Enabling extension mod_loader
+[2024-08-20 16:20:41.225] [modengine] [info] Installing mod location mod
+[2024-08-20 16:20:41.225] [modengine] [info] Resolved mod path to C:\Projects\ModManagerED\src-tauri\modengine\mod
+[2024-08-20 16:20:41.225] [modengine] [info] Enabled extension mod_loader
+[2024-08-20 16:20:41.264] [modengine] [info] Applied 3 hooks
+[2024-08-20 16:20:41.265] [modengine] [info] Starting worker thread
+[2024-08-20 16:21:15.778] [modengine] [info] Destroying
+[2024-08-20 16:21:15.778] [modengine] [info] Destroying
+[2024-08-20 16:21:15.778] [modengine] [info] Destroying
+[2024-08-20 16:21:15.778] [modengine] [info] Destroying
+[2024-08-20 16:21:15.778] [modengine] [info] Destroying
+[2024-08-20 16:21:15.778] [modengine] [info] Destroying
+[2024-08-20 16:21:15.778] [modengine] [info] Destroying
+[2024-08-20 16:21:15.778] [modengine] [info] Destroying
+[2024-08-20 16:21:15.778] [modengine] [info] Destroying
+[2024-08-20 16:21:15.779] [modengine] [info] Destroying

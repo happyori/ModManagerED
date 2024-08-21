@@ -7,6 +7,10 @@ pub enum ModManageredError {
     Surreal(#[from] surrealdb::Error),
     #[error("ERR: {0}")]
     Generic(#[from] anyhow::Error),
+    #[error(transparent)]
+    TomlSerializer(#[from] toml::ser::Error),
+    #[error(transparent)]
+    FileSystem(#[from] std::io::Error),
     #[error("unknown error")]
     Unknown,
 }

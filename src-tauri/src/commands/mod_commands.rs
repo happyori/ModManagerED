@@ -1,6 +1,8 @@
 use anyhow::anyhow;
 use tauri::State;
+
 use macros::define_cmd;
+
 use crate::manager_error::ManagerResult;
 use crate::plugins::database::Database;
 use crate::schema::{ModInfo, ModInfoDataModel};
@@ -32,7 +34,7 @@ pub async fn update_mod_info(
     let info = database
         .conn
         .update(&mod_info)
-        .content(mod_info)
+        .content(Into::<ModInfoDataModel>::into(mod_info))
         .await?;
     Ok(info)
 }

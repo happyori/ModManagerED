@@ -1,6 +1,6 @@
 use anyhow::anyhow;
-use syn::{GenericArgument, PathArguments, Type};
 use regex::RegexBuilder;
+use syn::{GenericArgument, PathArguments, Type};
 
 pub trait ToTypescript {
     type Error;
@@ -34,9 +34,8 @@ impl ToTypescript for Type {
                     .ok_or(anyhow!(not_implemented_error))?;
                 let ident_string = last_segment.ident.to_string();
 
-                // Handle Vectors
-                if ident_string == "Vec" && !last_segment.arguments.is_empty() {
-                    return match &last_segment.arguments {
+                let extract_inner = || {
+                    match &last_segment.arguments {
                         PathArguments::AngleBracketed(pargs) => {
                             let inner_type = pargs
                                 .args
@@ -49,11 +48,23 @@ impl ToTypescript for Type {
                                 })
                                 .last()
                                 .ok_or(anyhow!("Vector should have a type"))?;
-                            Ok(format!("Array<{}>", inner_type.clone().to_typescript()?))
+                            Ok(inner_type.clone())
                         }
                         PathArguments::None => Err(anyhow!("Vector has to have a type")),
                         PathArguments::Parenthesized(_) => Err(anyhow!(not_implemented_error)),
-                    };
+                    }
+                };
+
+                // Handle Vectors
+                if ident_string == "Vec" && !last_segment.arguments.is_empty() {
+                    let inner = extract_inner()?;
+                    return Ok(format!("Array<{}>", inner.to_typescript()?));
+                }
+
+                //Handle Options
+                if ident_string == "Option" && !last_segment.arguments.is_empty() {
+                    let inner = extract_inner()?;
+                    return Ok(format!("{} | undefined", inner.to_typescript()?));
                 }
 
                 //Handle Numbers

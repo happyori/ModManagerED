@@ -4,7 +4,7 @@
 	import { createTabs, melt } from '@melt-ui/svelte';
 	import { cubicInOut } from 'svelte/easing';
 	import { crossfade } from 'svelte/transition';
-	import ModContent from './ModContent.svelte';
+	import ModContent from '$lib/components/ModContent.svelte';
 	import { ExtraModStore, MainModStore } from '$lib/stores/mods';
 
 	const tabs = [
@@ -30,7 +30,7 @@
 
 <div
 	use:melt={$root}
-	class="flex max-w-full h-fit mx-2 mt-3 flex-col overflow-hidden rounded-xl shadow-lg data-[orientation=vertical]:flex-row">
+	class="flex max-w-full h-[80%] mx-2 mt-3 flex-col overflow-hidden rounded-xl shadow-lg data-[orientation=vertical]:flex-row">
 	<div
 		use:melt={$list}
 		class="flex shrink-0 overflow-x-auto bg-neutral-100 data-[orientation=vertical]:flex-col data-[orientation=vertical]:border-r"
@@ -52,13 +52,13 @@
 	<div
 		use:melt={$content('mods')}
 		aria-label="Main Mods"
-		class="w-full h-80 bg-neutral-50">
+		class="w-full h-full bg-neutral-50">
 		<ModContent modStore={MainModStore} />
 	</div>
 	<div
 		use:melt={$content('extra')}
 		aria-label="Extra Mods"
-		class="w-full h-80 bg-neutral-50">
+		class="w-full h-full bg-neutral-50">
 		<ModContent modStore={ExtraModStore} />
 	</div>
 </div>

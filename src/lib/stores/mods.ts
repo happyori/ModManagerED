@@ -20,3 +20,7 @@ function createStore() {
 export const ModInfoStore = createStore();
 export const ExtraModStore = derived(ModInfoStore, ($mods) => $mods.filter((m) => m.is_dll));
 export const MainModStore = derived(ModInfoStore, ($mods) => $mods.filter((m) => !m.is_dll));
+
+export const findModInfoById = (store: ModInfo[], id: string) => {
+	return store.find((val) => val.id === id);
+};
