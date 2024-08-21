@@ -26,6 +26,9 @@ async-trait = "0.1.81"
 steamlocate = "2.0.0-beta.2"
 subprocess = "0.2.9"
 dunce = "1.0.5"
+window-shadows = "0.2.2"
+window-vibrancy = "0.4.3"
+
 macros = { path = "./macros" }
 
 [features]
