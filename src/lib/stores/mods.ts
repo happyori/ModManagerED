@@ -1,15 +1,12 @@
-import { type ModInfo } from '$generated/ModInfo';
-import Commands from '$lib/commands';
+import { createTauRPCProxy, type ModInfo } from '$generated/binding';
 import { derived, writable } from 'svelte/store';
 
 function createStore() {
 	let { set, subscribe } = writable<ModInfo[]>([]);
 
 	const fetchAllMods = async () => {
-		const tauri = await import('@tauri-apps/api');
-		console.log('Fetching mods and storing them');
-		const fetched = await tauri.invoke<ModInfo[]>(Commands.FetchAllMods);
-		console.log(fetched);
+		const rpc = await createTauRPCProxy();
+		const fetched = await rpc.api.mod.fetch_all();
 		set(fetched);
 		return fetched;
 	};

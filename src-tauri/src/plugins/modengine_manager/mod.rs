@@ -7,7 +7,6 @@ use tauri::PathResolver;
 
 use crate::manager_error::ManagerResult;
 use crate::plugins::database::Database;
-use crate::plugins::database_trait::DatabaseTrait;
 use crate::plugins::modengine_manager::mod_engine_config::{Mod, ModEngineConfig};
 use crate::schema::{ModInfo, Profile};
 

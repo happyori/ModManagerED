@@ -1,14 +1,11 @@
 <script
 	lang="ts"
 	context="module">
-	const tauri = await import('@tauri-apps/api');
+	const { rpc } = await import('$lib/utilities/rpc');
 </script>
 
 <script lang="ts">
-	import type { ModInfo } from '$generated/ModInfo';
-
-	import Commands from '$lib/commands';
-
+	import { createTauRPCProxy, type ModInfo } from '$generated/binding';
 	import Switch from '$lib/components/Switch.svelte';
 	import { ToasterContext, type ToasterContextReturn } from '$lib/components/Toster.svelte';
 	import { SelectedProfile } from '$lib/stores/profiles';
@@ -22,17 +19,15 @@
 	let mods: WithEnabled<ModInfo>[] = $modStore.map((v) => ({ ...v, enabled: false }));
 
 	const fetchModEnabledStatus = () => {
-		tauri
-			.invoke<ModInfo[]>(Commands.GetActiveMods, { profileId: $SelectedProfile?.id })
-			.then((enabledMods) => {
-				for (const enabledMod of enabledMods) {
-					let mod = mods.find((mod) => mod.id === enabledMod.id);
-					if (mod === undefined) continue;
-					mod.enabled = true;
-				}
-				console.log(mods);
-				mods = [...mods];
-			});
+		rpc.api.mod.manage.fetch_active($SelectedProfile?.id!).then((enabledMods) => {
+			for (const enabledMod of enabledMods) {
+				let mod = mods.find((mod) => mod.id === enabledMod.id);
+				if (mod === undefined) continue;
+				mod.enabled = true;
+			}
+			console.log(mods);
+			mods = [...mods];
+		});
 	};
 
 	$: if ($SelectedProfile) fetchModEnabledStatus();
@@ -55,10 +50,10 @@
 		try {
 			if (check) {
 				console.log(`Mod: ${id} activated for ${profile?.name}`);
-				await tauri.invoke(Commands.EnableMod, { profileId: profile?.id, modId: id });
+				await rpc.api.mod.manage.enable(profile.id, id);
 			} else {
 				console.log(`Mod: ${id} deactivated for ${profile?.name}`);
-				await tauri.invoke(Commands.DisableMod, { profileId: profile?.id, modId: id });
+				await rpc.api.mod.manage.disable(profile.id, id);
 			}
 		} catch (e: any) {
 			addToast({ data: { title: 'Mod Enable failed', type: 'error', content: e } });

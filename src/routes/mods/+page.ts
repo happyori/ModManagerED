@@ -1,7 +1,7 @@
 import type { PageLoad } from './$types';
-import { ModInfoStore } from '$lib/stores/mods';
 
 export const load = (async ({ depends }) => {
+	const { ModInfoStore } = await import('$lib/stores/mods');
 	depends('mods:data');
 	const mods = await ModInfoStore.fetchAllMods();
 

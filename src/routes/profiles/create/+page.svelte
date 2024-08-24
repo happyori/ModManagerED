@@ -1,16 +1,16 @@
 <script lang="ts">
-	import Commands from '$lib/commands';
-	import { tauri } from '@tauri-apps/api';
 	import { goto, invalidate } from '$app/navigation';
+	import { createTauRPCProxy } from '$generated/binding';
 
 	let profile_name = '';
 
 	async function createProfile() {
+		const rpc = await createTauRPCProxy();
 		try {
 			if (profile_name === '') {
 				return console.error('Profile name needs to be set');
 			}
-			await tauri.invoke(Commands.CreateProfile, { profileDataModel: { name: profile_name } });
+			await rpc.api.profile.create({ name: profile_name });
 			await invalidate('profiles:data');
 			await goto('/profiles');
 		} catch (e) {

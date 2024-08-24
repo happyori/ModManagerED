@@ -2,8 +2,6 @@ use std::path::PathBuf;
 use std::sync::Mutex;
 
 use steamlocate::SteamDir;
-use tauri::{Manager, Runtime};
-use tauri::plugin::{Builder, TauriPlugin};
 
 #[derive(Debug)]
 pub struct SteamLocate {
@@ -18,6 +16,12 @@ impl SteamLocate {
             steam_dir: Mutex::new(steam_dir),
         }
     }
+
+    pub fn init() -> anyhow::Result<Self> {
+        let dir = SteamDir::locate()?;
+        Ok(Self::new(dir))
+    }
+
     pub fn get_elden_ring_install(&self) -> Option<PathBuf> {
         self.steam_dir
             .lock()
@@ -32,14 +36,4 @@ impl SteamLocate {
             .map(|path| path.into_os_string())
             .map(|os| os.into_string().unwrap())
     }
-}
-
-pub fn init<R: Runtime>() -> TauriPlugin<R, ()> {
-    Builder::new("steamlocate")
-        .setup(|app| {
-            let steam_dir = SteamDir::locate()?;
-            app.manage(SteamLocate::new(steam_dir));
-            Ok(())
-        })
-        .build()
 }

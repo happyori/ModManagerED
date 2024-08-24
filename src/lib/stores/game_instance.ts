@@ -1,36 +1,31 @@
-import type { GameInstance } from '$generated/GameInstance';
-import Commands from '$lib/commands';
+import { createTauRPCProxy, type GameInstance } from '$generated/binding';
 import { writable } from 'svelte/store';
 
 function createStore() {
 	let { set: innerSet, subscribe } = writable<GameInstance>();
 
 	const set = async (value: GameInstance) => {
-		const tauri = await import('@tauri-apps/api');
-		const output = await tauri.invoke<GameInstance>(Commands.UpdateGameInstance, {
-			gameInstance: value
-		});
+		const rpc = await createTauRPCProxy();
+		const output = await rpc.api.game.update(value);
 		innerSet(output);
 	};
 
 	const tryFetchOrCreate = async () => {
-		const tauri = await import('@tauri-apps/api');
+		const rpc = await createTauRPCProxy();
 		try {
-			const instance = await tauri.invoke<GameInstance>(Commands.FetchTheGameInstance);
+			const instance = await rpc.api.game.fetch();
 			innerSet(instance);
 			return instance;
 		} catch {
-			const instance = await tauri.invoke<GameInstance>(Commands.UpsertGameInstance, {
-				gameInstanceDataModel: {}
-			});
+			const instance = await rpc.api.game.upsert({ mod_engine_path: null, path: null });
 			innerSet(instance);
 			return instance;
 		}
 	};
 
 	const resetStore = async () => {
-		const tauri = await import('@tauri-apps/api');
-		const instance = await tauri.invoke<GameInstance>(Commands.ResetGameInstance);
+		const rpc = await createTauRPCProxy();
+		const instance = await rpc.api.game.reset();
 		innerSet(instance);
 		return instance;
 	};

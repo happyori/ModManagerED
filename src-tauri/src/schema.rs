@@ -1,9 +1,10 @@
 use serde::{Deserialize, Serialize};
 use surrealdb::opt::{IntoResource, Resource};
-
-use macros::{DeriveDataModel, GenerateTypescript};
+use specta::Type;
+use macros::{DeriveDataModel};
 
 use crate::database_id::DbID;
+use crate::plugins::database_trait::IntoRefResource;
 
 macro_rules! impl_into_resource {
     ($srct: ident) => {
@@ -27,34 +28,33 @@ macro_rules! impl_into_resource {
                 Ok(self.id.as_ref().into())
             }
         }
+        impl IntoRefResource for $srct {
+            fn into_referenced_resource(&self) -> impl IntoResource<Option<Self>> {
+                self
+            }
+        }
     };
 }
 
-#[derive(Serialize, Debug, Deserialize, DeriveDataModel, Clone, GenerateTypescript)]
-#[gen(directory = "../src/generated")]
+#[derive(Serialize, Debug, Deserialize, DeriveDataModel, Clone, Type)]
 pub struct GameInstance {
     #[omitted]
-    #[gen(typed_as = String)]
     pub id: DbID,
     #[optional]
     pub path: String,
     pub mod_engine_path: Option<String>
 }
 
-#[derive(Serialize, Debug, Deserialize, DeriveDataModel, Clone, GenerateTypescript)]
-#[gen(directory = "../src/generated")]
+#[derive(Serialize, Debug, Deserialize, DeriveDataModel, Clone, Type)]
 pub struct Profile {
-    #[gen(typed_as = String)]
     #[omitted]
     pub id: DbID,
     #[required]
     pub name: String,
 }
 
-#[derive(Serialize, Debug, Deserialize, DeriveDataModel, Clone, GenerateTypescript)]
-#[gen(directory = "../src/generated")]
+#[derive(Serialize, Debug, Deserialize, DeriveDataModel, Clone, Type)]
 pub struct ModInfo {
-    #[gen(typed_as = String)]
     #[omitted]
     pub id: DbID,
     #[optional]

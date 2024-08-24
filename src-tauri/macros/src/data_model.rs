@@ -89,7 +89,7 @@ fn generate_data_model(fields: &Fields, struct_ident: &Ident) -> proc_macro2::To
     };
     let from_impl = build_from_impl(&new_struct_ident, &struct_ident, field_idents);
     quote! {
-        #[derive(::serde::Serialize, ::serde::Deserialize, ::std::clone::Clone, Default)]
+        #[derive(::serde::Serialize, ::serde::Deserialize, ::std::clone::Clone, Default, specta::Type)]
         pub struct #new_struct_ident {
             #new_fields
         }

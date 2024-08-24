@@ -6,12 +6,19 @@ use surrealdb::sql::{Thing};
 use serde::{de, Deserialize, Deserializer, Serialize, Serializer};
 use serde::de::{Error, MapAccess, Visitor};
 use surrealdb::opt::Resource;
+use specta::{DataType, Generics, Type, TypeMap};
 
 #[derive(Debug, Deserialize, Clone, Ord, PartialOrd, Eq, PartialEq)]
 pub struct DbID(
     #[serde(deserialize_with = "string_or_struct")]
     pub(crate) Thing
 );
+
+impl Type for DbID {
+    fn inline(type_map: &mut TypeMap, generics: Generics) -> DataType {
+        <String as Type>::inline(type_map, generics)
+    }
+}
 
 impl Deref for DbID {
     type Target = Thing;

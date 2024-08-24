@@ -1,7 +1,6 @@
 <script lang="ts">
 	import FileSelectButton from '$lib/components/FileSelectButton.svelte';
 
-	import type { ModInfo } from '$generated/ModInfo';
 	import { createCheckbox, createCollapsible, createLabel, melt } from '@melt-ui/svelte';
 	import { cubicInOut } from 'svelte/easing';
 	import { tweened } from 'svelte/motion';
@@ -9,17 +8,17 @@
 	import type { OpenDialogOptions } from '@tauri-apps/api/dialog';
 	import { getContext } from 'svelte';
 	import { ToasterContext, type ToasterContextReturn } from '$lib/components/Toster.svelte';
-	import Commands from '$lib/commands';
 	import { goto } from '$app/navigation';
+	import { createTauRPCProxy, type ModInfoDataModel } from '$generated/binding';
 
 	const { addToast } = getContext<ToasterContextReturn>(ToasterContext);
 
 	const handleSubmit = async () => {
-		if (info.deployment_path === '') info.deployment_path = undefined;
-		const tauri = await import('@tauri-apps/api');
+		if (info.deployment_path === '') info.deployment_path = null;
+		const rpc = await createTauRPCProxy();
 
 		try {
-			await tauri.invoke(Commands.CreateModInfo, { data: info });
+			await rpc.api.mod.create(info);
 			goto('/mods');
 		} catch (e) {
 			addToast({
@@ -33,12 +32,10 @@
 		}
 	};
 
-	type Info = Omit<ModInfo, 'id'>;
-
-	let info: Info = {
+	let info: ModInfoDataModel = {
 		path: '',
 		name: '',
-		deployment_path: undefined,
+		deployment_path: null,
 		is_dll: false
 	};
 

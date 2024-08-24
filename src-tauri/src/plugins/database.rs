@@ -2,15 +2,16 @@ use std::path::PathBuf;
 
 use anyhow::{anyhow, bail, Result};
 use async_trait::async_trait;
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
+use serde::de::DeserializeOwned;
 use surrealdb::engine::local::{Db, RocksDb};
-use surrealdb::opt::Config;
+use surrealdb::opt::{Config, IntoResource};
 use surrealdb::Surreal;
-use tauri::{Manager, PathResolver, Runtime};
-use tauri::plugin::{Builder, TauriPlugin};
+use tauri::api::path::{cache_dir, local_data_dir};
 
 use crate::database_id::DbID;
-use crate::plugins::database_trait::DatabaseTrait;
+use crate::manager_error::ManagerResult;
+use crate::plugins::database_trait::{DatabaseTrait, IntoRefResource};
 use crate::schema::{GameInstance, ModInfo};
 
 #[derive(Debug)]
@@ -18,9 +19,23 @@ pub(crate) struct Database {
     pub conn: Surreal<Db>,
 }
 
-#[async_trait]
-impl DatabaseTrait for Database {
-    async fn get_active_mods(&self, profile: DbID) -> Result<Vec<ModInfo>> {
+impl Database {
+    pub async fn new(config: DatabaseConfig) -> Result<Self> {
+        let data_dir = config.base_path
+            .clone()
+            .or(local_data_dir())
+            .or(cache_dir())
+            .ok_or(anyhow!("Database Directory should have been located"))?
+            .join(&config.database_filename);
+
+        dbg!(&config);
+
+        let connection = create_db_connection(data_dir, config).await?;
+        define_upsert(&connection).await?;
+
+        Ok(Self { conn: connection })
+    }
+    pub async fn get_active_mods(&self, profile: DbID) -> Result<Vec<ModInfo>> {
         const ACTIVE_MODS_QUERY: &str = "\
             SELECT VALUE ->ProfileMods->ModInfos.*
             FROM ONLY $profile;
@@ -35,7 +50,7 @@ impl DatabaseTrait for Database {
         Ok(response)
     }
 
-    async fn enable_mod(&self, profile: DbID, mod_info: DbID) -> Result<()> {
+    pub async fn enable_mod(&self, profile: DbID, mod_info: DbID) -> Result<()> {
         const CHECK_RELATION: &str = "\
             array::any((SELECT id FROM ProfileMods WHERE out = $mod_info AND in = $profile));
         ";
@@ -60,7 +75,7 @@ impl DatabaseTrait for Database {
         Ok(())
     }
 
-    async fn disable_mod(&self, profile: DbID, mod_info: DbID) -> Result<()> {
+    pub async fn disable_mod(&self, profile: DbID, mod_info: DbID) -> Result<()> {
         self.conn
             .query("DELETE $profile->ProfileMods WHERE out=$mod_info")
             .bind(("profile", profile.0))
@@ -70,7 +85,7 @@ impl DatabaseTrait for Database {
         Ok(())
     }
 
-    async fn get_instance(&self) -> Result<GameInstance> {
+    pub async fn get_instance(&self) -> Result<GameInstance> {
         let result = self
             .conn
             .select(("GameInstances", "main"))
@@ -81,43 +96,69 @@ impl DatabaseTrait for Database {
     }
 }
 
+#[async_trait]
+impl DatabaseTrait for Database {
+    async fn create<R, RModel>(&self, resource: impl IntoResource<Vec<R>> + Send, content: RModel) -> ManagerResult<R>
+    where
+        R: Send + DeserializeOwned,
+        RModel: Send + Serialize,
+    {
+        let created: Vec<R> = self.conn
+            .create(resource)
+            .content(content)
+            .await?;
+        let first = created.into_iter().next().ok_or(anyhow!("Failed to create resource"))?;
+        Ok(first)
+    }
+
+    async fn update<R, RModel>(&self, content: R) -> ManagerResult<Option<R>>
+    where
+        RModel: Send + Serialize + From<R>,
+        R: Send + DeserializeOwned + IntoRefResource,
+    {
+        let update = self
+            .conn
+            .update(content.into_referenced_resource())
+            .content(Into::<RModel>::into(content))
+            .await?;
+
+        Ok(update)
+    }
+
+    async fn delete<R>(&self, content: R) -> ManagerResult<Option<R>>
+    where
+        R: Send + IntoResource<Option<R>> + DeserializeOwned,
+    {
+        let deleted = self
+            .conn
+            .delete(content)
+            .await?;
+
+        Ok(deleted)
+    }
+
+    async fn fetch<R>(&self, resource: impl IntoResource<Vec<R>> + Send) -> ManagerResult<Vec<R>>
+    where
+        R: Send + DeserializeOwned,
+    {
+        let fetched = self
+            .conn
+            .select(resource)
+            .await?;
+
+        Ok(fetched)
+    }
+}
+
 #[derive(Deserialize, Clone, Debug)]
 pub(crate) struct DatabaseConfig {
     base_path: Option<PathBuf>,
+    #[serde(alias = "filename")]
     database_filename: String,
+    #[serde(alias = "name")]
     database_name: String,
+    #[serde(alias = "namespace")]
     database_namespace: String,
-}
-
-pub fn init<R: Runtime>() -> TauriPlugin<R, DatabaseConfig> {
-    Builder::<R, DatabaseConfig>::new("database")
-        .setup_with_config(|app, config| {
-            let db_path = get_db_path(app.path_resolver(), &config);
-            let handle = app.app_handle();
-            tauri::async_runtime::spawn(async move {
-                let db_conn = create_db_connection(db_path, config)
-                    .await
-                    .expect("Database should have been setup");
-                define_upsert(&db_conn).await.expect("Defining Upsert should succeed");
-                handle.manage(Database { conn: db_conn });
-            });
-            Ok(())
-        })
-        .build()
-}
-
-fn get_db_path(path_resolver: PathResolver, config: &DatabaseConfig) -> PathBuf {
-    let config = config.to_owned();
-    let base = config
-        .base_path
-        .or(path_resolver.app_data_dir())
-        .or(path_resolver.app_cache_dir())
-        .expect("failed to obtain app data or app cache directory...");
-    println!(
-        "Selected path for db [{base:#?} + {:#?}]",
-        &config.database_filename
-    );
-    base.join(config.database_filename)
 }
 
 async fn create_db_connection(
@@ -138,9 +179,7 @@ async fn create_db_connection(
     Ok(conn)
 }
 
-async fn define_upsert(
-    conn: &Surreal<Db>
-) -> Result<()> {
+async fn define_upsert(conn: &Surreal<Db>) -> Result<()> {
     const DEFINE_QUERY: &str = r"
     DEFINE FUNCTION fn::upsert($rec: record, $data: any) {
         LET $id = meta::id($rec);

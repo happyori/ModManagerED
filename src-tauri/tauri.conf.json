@@ -7,7 +7,7 @@
   },
   "package": {
     "productName": "goldenorder",
-    "version": "0.0.0"
+    "version": "0.1.0"
   },
   "tauri": {
     "allowlist": {
@@ -27,7 +27,7 @@
     },
     "windows": [
       {
-        "title": "Mod Manager Elden Ring",
+        "title": "Elden Ring Mod Manager",
         "width": 800,
         "height": 600,
         "transparent": true
@@ -52,12 +52,5 @@
       ]
     }
   },
-  "plugins": {
-    "database": {
-      "base_path": "C:\\Projects\\ModManagerED",
-      "database_filename": "data.db",
-      "database_name": "ModManagerED",
-      "database_namespace": "ModManagerData"
-    }
-  }
+  "plugins": {}
 }

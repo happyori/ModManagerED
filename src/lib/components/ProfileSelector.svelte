@@ -1,5 +1,4 @@
 <script lang="ts">
-	import type { Profile } from '$generated/Profile';
 	import Icon from '@iconify/svelte';
 	import { fade } from 'svelte/transition';
 	import { tweened } from 'svelte/motion';
@@ -7,9 +6,9 @@
 	import { cn } from '$lib/utilities/cn';
 	import { ProfileStore, SelectedProfile } from '$lib/stores/profiles';
 	import { createSelect, createSeparator, melt } from '@melt-ui/svelte';
-	import Commands from '$lib/commands';
 	import { getContext } from 'svelte';
 	import { ToasterContext, type ToasterContextReturn } from './Toster.svelte';
+	import { createTauRPCProxy, type Profile } from '$generated/binding';
 
 	const { addSuccessfulToast, addFailedToast } = getContext<ToasterContextReturn>(ToasterContext);
 
@@ -44,13 +43,13 @@
 	} = createSeparator({ decorative: true, orientation: 'vertical' });
 
 	const handlePlayClicked = async () => {
-		const tauri = await import('@tauri-apps/api');
+		const rpc = await createTauRPCProxy();
 		try {
-			if ($SelectedProfile == undefined) {
+			if ($SelectedProfile === undefined) {
 				addFailedToast('No profile selected, how did you even do this???');
 				return;
 			}
-			await tauri.invoke(Commands.LaunchGame, { profile: $SelectedProfile });
+			await rpc.api.mod.manage.launch_game($SelectedProfile);
 			addSuccessfulToast('Game launching...');
 		} catch (e) {
 			addFailedToast('Failed to launch!', `${e}`);
@@ -99,7 +98,7 @@
 		class="bg-green-800 w-[3px] h-[80%]" />
 	<button
 		on:click={handlePlayClicked}
-		disabled={$SelectedProfile == undefined}
+		disabled={$SelectedProfile === undefined}
 		class="disabled:cursor-not-allowed">
 		<Icon icon="ant-design:caret-right-outlined" />
 	</button>

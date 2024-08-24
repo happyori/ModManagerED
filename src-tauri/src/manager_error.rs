@@ -29,6 +29,6 @@ pub type ManagerResult<T> = Result<T, ModManageredError>;
 #[macro_export]
 macro_rules! generic {
      ($msg: literal) => {
-         return Err($crate::manager_error::ModManageredError::from(anyhow!($msg)))
+         return Err($crate::manager_error::ModManageredError::from(anyhow::anyhow!($msg)))
      };
 }

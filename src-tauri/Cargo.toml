@@ -1,6 +1,6 @@
 [package]
 name = "goldenorder"
-version = "0.0.0"
+version = "0.1.0"
 description = "Mod Manager for Elden Ring"
 authors = ["HappyOri"]
 edition = "2021"
@@ -14,7 +14,7 @@ members = ["macros", "utility"]
 tauri-build = { version = "1", features = [] }
 
 [dependencies]
-tauri = { version = "1", features = [ "dialog-open", "shell-open"] }
+tauri = { version = "1", features = ["dialog-open", "shell-open"] }
 serde = { version = "1.0.208", features = ["derive"] }
 serde_json = "1.0.125"
 toml = "0.8.19"
@@ -28,7 +28,10 @@ subprocess = "0.2.9"
 dunce = "1.0.5"
 window-shadows = "0.2.2"
 window-vibrancy = "0.4.3"
-
+taurpc = "0.2.7"
+specta = "2.0.0-rc.9"
+figment = { version = "0.10.19", features = ["yaml"] }
+concat-idents = "1.1.5"
 macros = { path = "./macros" }
 
 [features]

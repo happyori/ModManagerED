@@ -1,9 +1,3 @@
-<script
-	lang="ts"
-	context="module">
-	const tauri = await import('@tauri-apps/api');
-</script>
-
 <script lang="ts">
 	import FileSelectButton from '$lib/components/FileSelectButton.svelte';
 
@@ -14,18 +8,20 @@
 	import type { OpenDialogOptions } from '@tauri-apps/api/dialog';
 	import { getContext } from 'svelte';
 	import { ToasterContext, type ToasterContextReturn } from '$lib/components/Toster.svelte';
-	import Commands from '$lib/commands';
 	import { goto, invalidate } from '$app/navigation';
 	import type { PageData } from './$types';
+	import { createTauRPCProxy } from '$generated/binding';
 
 	export let data: PageData;
 	const { addToast } = getContext<ToasterContextReturn>(ToasterContext);
 
 	const handleSubmit = async () => {
-		if (info?.deployment_path === '') info.deployment_path = undefined;
+		if (info?.deployment_path === '') info.deployment_path = null;
+		if (info === undefined) return;
+		const rpc = await createTauRPCProxy();
 
 		try {
-			await tauri.invoke(Commands.UpdateModInfo, { modInfo: info });
+			await rpc.api.mod.update(info);
 			addToast({
 				data: {
 					title: 'Succefully update mod',
@@ -46,9 +42,10 @@
 
 	const handleDelete = async () => {
 		if (!info) return goto('/mods');
+		const rpc = await createTauRPCProxy();
 
 		try {
-			await tauri.invoke(Commands.DeleteModInfo, { modInfo: info });
+			await rpc.api.mod.delete(info);
 			await invalidate('mods:data');
 			await goto('/mods');
 		} catch (error) {

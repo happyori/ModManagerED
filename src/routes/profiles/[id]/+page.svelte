@@ -1,61 +1,52 @@
-<script
-	lang="ts"
-	context="module">
-	const tauri = await import('@tauri-apps/api');
-</script>
-
 <script lang="ts">
-	import type { Profile } from '$generated/Profile';
-	import Commands from '$lib/commands';
-
 	import { findProfileById, ProfileStore } from '$lib/stores/profiles';
 	import { getContext } from 'svelte';
-	import type { PageData } from '../[id]/$types';
+	import type { PageData } from './$types';
 	import { melt, createLabel } from '@melt-ui/svelte';
 	import { ToasterContext, type ToasterContextReturn } from '$lib/components/Toster.svelte';
 	import { goto, invalidate } from '$app/navigation';
+	import { createTauRPCProxy } from '$generated/binding';
 
 	export let data: PageData;
-	const { addToast } = getContext<ToasterContextReturn>(ToasterContext);
+	const { addFailedToast, addSuccessfulToast } = getContext<ToasterContextReturn>(ToasterContext);
 
 	const {
 		elements: { root }
 	} = createLabel();
 
 	const handleSave = async () => {
+		if (profile === undefined) {
+			addFailedToast('Profile is not found!');
+			return;
+		}
+		const rpc = await createTauRPCProxy();
 		try {
-			await tauri.invoke<Profile>(Commands.UpdateProfile, { profile });
+			await rpc.api.profile.update(profile);
 			await invalidate('profiles:data');
-			addToast({
-				data: {
-					title: 'Successfully updated the profile',
-					type: 'success'
-				}
-			});
+			addSuccessfulToast('Successfully updated the profile');
 		} catch (error) {
-			addToast({
-				data: {
-					title: 'Failed to update profile',
-					content: `Profile ${profile?.name} was not updated\n${error}`,
-					type: 'error'
-				}
-			});
+			addFailedToast(
+				'Failed to update profile',
+				`Profile ${profile?.name} was not updated\n${error}`
+			);
 		}
 	};
 
 	const handleDelete = async () => {
+		if (profile === undefined) {
+			addFailedToast('Profile is not found!');
+			return;
+		}
+		const rpc = await createTauRPCProxy();
 		try {
-			await tauri.invoke<Profile>(Commands.DeleteProfile, { profile });
+			await rpc.api.profile.delete(profile);
 			await invalidate('profiles:data');
 			await goto('/profiles');
 		} catch (error) {
-			addToast({
-				data: {
-					title: 'Failed to delete the profile',
-					content: `Profile ${profile?.name} was not deleted\n${error}`,
-					type: 'error'
-				}
-			});
+			addFailedToast(
+				'Failed to delete the profile',
+				`Profile ${profile?.name} was not deleted\n${error}`
+			);
 		}
 	};
 

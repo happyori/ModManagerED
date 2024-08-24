@@ -16,7 +16,7 @@
 	};
 
 	export let options: OpenDialogOptions = {};
-	export let value: string | undefined;
+	export let value: string | undefined | null;
 	export let tooltipDirection: 'top' | 'bottom' | 'left' | 'right' = 'bottom';
 
 	const {

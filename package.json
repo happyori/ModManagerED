@@ -1,6 +1,6 @@
 {
 	"name": "modmanagered",
-	"version": "0.0.0",
+	"version": "0.1.0",
 	"description": "",
 	"type": "module",
 	"scripts": {
@@ -17,7 +17,8 @@
 	},
 	"license": "The Fight Club License",
 	"dependencies": {
-		"@tauri-apps/api": "^1"
+		"@tauri-apps/api": "^1",
+		"taurpc": "^1.4.4"
 	},
 	"devDependencies": {
 		"@iconify/svelte": "^4.0.2",
