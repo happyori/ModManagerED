@@ -3,7 +3,6 @@
 	import { fade } from 'svelte/transition';
 	import { tweened } from 'svelte/motion';
 	import { cubicInOut } from 'svelte/easing';
-	import { cn } from '$lib/utilities/cn';
 	import { ProfileStore, SelectedProfile } from '$lib/stores/profiles';
 	import { createSelect, createSeparator, melt } from '@melt-ui/svelte';
 	import { getContext } from 'svelte';
@@ -36,7 +35,6 @@
 		easing: cubicInOut
 	});
 	$: rotation.set($open ? 180 : 0);
-	$: rounded = $open ? 'rounded-bl-none' : '';
 
 	const {
 		elements: { root: separator }
@@ -57,7 +55,9 @@
 	};
 </script>
 
-<div class={cn('flex bg-green-700 rounded pr-1 items-center transition-colors', rounded)}>
+<div
+	class="flex items-center rounded bg-green-700 pr-1 transition-colors"
+	class:rounded-bl-none={$open}>
 	<div>
 		<button
 			class="flex flex-row items-center gap-1 pl-1.5"
@@ -82,11 +82,11 @@
 			<div
 				transition:fade={{ duration: 150 }}
 				use:melt={$menu}
-				class="z-10 flex max-h-[300px] px-0 pb-2 space-y-0.5 bg-green-700 flex-col overflow-y-auto rounded-lg rounded-t-none shadow">
+				class="z-10 max-h-[300px] flex flex-col overflow-y-auto rounded-lg rounded-t-none bg-green-700 px-0 pb-2 shadow space-y-0.5">
 				{#each profiles as profile (profile.id)}
 					<span
 						use:melt={$option({ value: profile, label: profile.name })}
-						class="text-white text-sm tracking-tight leading-tight cursor-pointer hover:bg-green-800 px-2 py-1">
+						class="cursor-pointer px-2 py-1 text-sm text-white leading-tight tracking-tight hover:bg-green-800">
 						{profile.name}
 					</span>
 				{/each}
@@ -95,7 +95,7 @@
 	</div>
 	<span
 		use:melt={$separator}
-		class="bg-green-800 w-[3px] h-[80%]" />
+		class="h-[80%] w-[3px] bg-green-800" />
 	<button
 		on:click={handlePlayClicked}
 		disabled={$SelectedProfile === undefined}

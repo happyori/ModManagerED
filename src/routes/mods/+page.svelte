@@ -30,7 +30,7 @@
 
 <div
 	use:melt={$root}
-	class="flex max-w-full h-[80%] mx-2 mt-3 flex-col overflow-hidden rounded-xl shadow-lg data-[orientation=vertical]:flex-row">
+	class="mx-2 mt-3 h-[80%] max-w-full flex flex-col overflow-hidden rounded-xl shadow-lg data-[orientation=vertical]:flex-row">
 	<div
 		use:melt={$list}
 		class="flex shrink-0 overflow-x-auto bg-neutral-100 data-[orientation=vertical]:flex-col data-[orientation=vertical]:border-r"
@@ -44,7 +44,7 @@
 					<div
 						in:send={{ key: 'trigger' }}
 						out:receive={{ key: 'trigger' }}
-						class="absolute bottom-1 left-1/2 h-1 w-6 -translate-x-1/2 rounded-full bg-royal-indigo-500" />
+						class="bg-royal-indigo-500 absolute bottom-1 left-1/2 h-1 w-6 rounded-full -translate-x-1/2" />
 				{/if}
 			</button>
 		{/each}
@@ -52,13 +52,13 @@
 	<div
 		use:melt={$content('mods')}
 		aria-label="Main Mods"
-		class="w-full h-full bg-neutral-50">
+		class="h-full w-full bg-neutral-50">
 		<ModContent modStore={MainModStore} />
 	</div>
 	<div
 		use:melt={$content('extra')}
 		aria-label="Extra Mods"
-		class="w-full h-full bg-neutral-50">
+		class="h-full w-full bg-neutral-50">
 		<ModContent modStore={ExtraModStore} />
 	</div>
 </div>
@@ -74,15 +74,15 @@
 		user-select: none;
 
 		border-radius: 0;
-		background-color: theme(colors.neutral.100);
+		background-color: theme('colors.neutral.100');
 
-		color: theme(colors.neutral.900);
+		color: theme('colors.neutral.900');
 		font-weight: 500;
 		line-height: 1;
 
 		flex: 1;
-		height: theme(spacing.12);
-		padding-inline: theme(spacing.2);
+		height: theme('spacing.12');
+		padding-inline: theme('spacing.2');
 
 		&:focus {
 			position: relative;
@@ -93,7 +93,7 @@
 		}
 
 		&[data-state='active'] {
-			@apply focus:visible;
+			@apply 'focus:visible';
 			background-color: white;
 			color: theme('colors.royal-indigo.800');
 		}

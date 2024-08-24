@@ -5,7 +5,7 @@
 </script>
 
 <script lang="ts">
-	import { createTauRPCProxy, type ModInfo } from '$generated/binding';
+	import { type ModInfo } from '$generated/binding';
 	import Switch from '$lib/components/Switch.svelte';
 	import { ToasterContext, type ToasterContextReturn } from '$lib/components/Toster.svelte';
 	import { SelectedProfile } from '$lib/stores/profiles';
@@ -19,7 +19,8 @@
 	let mods: WithEnabled<ModInfo>[] = $modStore.map((v) => ({ ...v, enabled: false }));
 
 	const fetchModEnabledStatus = () => {
-		rpc.api.mod.manage.fetch_active($SelectedProfile?.id!).then((enabledMods) => {
+		if (!$SelectedProfile) return;
+		rpc.api.mod.manage.fetch_active($SelectedProfile.id).then((enabledMods) => {
 			for (const enabledMod of enabledMods) {
 				let mod = mods.find((mod) => mod.id === enabledMod.id);
 				if (mod === undefined) continue;
@@ -55,8 +56,8 @@
 				console.log(`Mod: ${id} deactivated for ${profile?.name}`);
 				await rpc.api.mod.manage.disable(profile.id, id);
 			}
-		} catch (e: any) {
-			addToast({ data: { title: 'Mod Enable failed', type: 'error', content: e } });
+		} catch (e) {
+			addToast({ data: { title: 'Mod Enable failed', type: 'error', content: String(e) } });
 			return false;
 		}
 
@@ -66,24 +67,24 @@
 
 <div
 	use:melt={$root}
-	class="relative w-full h-full p-4 text-black">
+	class="relative h-full w-full p-4 text-black">
 	<section
 		use:melt={$viewport}
-		class="w-full h-full">
+		class="h-full w-full">
 		<div
 			use:melt={$content}
 			class="h-full space-y-2">
 			{#each mods as mod (mod.id)}
 				<div class="flex flex-row">
 					<a
-						class="flex flex-col shrink bg-neutral-200/40 px-4 py-px rounded-md hover:bg-neutral-200/70"
+						class="flex shrink flex-col rounded-md bg-neutral-200/40 px-4 py-px hover:bg-neutral-200/70"
 						href="/mods/{mod.id}">
 						<span
-							class="text-lg font-bold capitalize tracking-tighter first-letter:text-royal-indigo-400">
+							class="first-letter:text-royal-indigo-400 text-lg font-bold tracking-tighter capitalize">
 							{mod.name}
 						</span>
 					</a>
-					<div class="flex-grow flex flex-row justify-end items-center gap-3">
+					<div class="flex flex-grow flex-row items-center justify-end gap-3">
 						<span class="select-none">Enable:</span>
 						<Switch
 							disable={$SelectedProfile === undefined}
@@ -92,7 +93,7 @@
 					</div>
 				</div>
 			{:else}
-				<span class="flex justify-center select-none font-bold text-center w-full">
+				<span class="w-full flex select-none justify-center text-center font-bold">
 					Please add new mod using + in the bottom right corner
 				</span>
 			{/each}
@@ -100,10 +101,10 @@
 	</section>
 	<div
 		use:melt={$scrollbarY}
-		class="flex h-full w-2.5 touch-none select-none border-l border-l-transparent bg-neutral-600/15 p-px transition-colors">
+		class="h-full w-2.5 flex touch-none select-none border-l border-l-transparent bg-neutral-600/15 p-px transition-colors">
 		<span
 			use:melt={$thumbY}
-			class="relative flex-1 rounded-full bg-neutral-600/50 hover:bg-neutral-600/60 transition-colors" />
+			class="relative flex-1 rounded-full bg-neutral-600/50 transition-colors hover:bg-neutral-600/60" />
 	</div>
 	<span use:melt={$corner} />
 </div>

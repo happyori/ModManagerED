@@ -2,7 +2,7 @@ import { createTauRPCProxy, type ModInfo } from '$generated/binding';
 import { derived, writable } from 'svelte/store';
 
 function createStore() {
-	let { set, subscribe } = writable<ModInfo[]>([]);
+	const { set, subscribe } = writable<ModInfo[]>([]);
 
 	const fetchAllMods = async () => {
 		const rpc = await createTauRPCProxy();

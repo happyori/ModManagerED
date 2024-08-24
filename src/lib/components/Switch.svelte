@@ -40,7 +40,7 @@
 </script>
 
 <button
-	class="relative h-6 cursor-default rounded-full bg-royal-indigo-400 transition-colors data-[state=checked]:bg-green-600 data-[disabled=true]:bg-neutral-500"
+	class="bg-royal-indigo-400 relative h-6 cursor-default rounded-full transition-colors data-[disabled=true]:bg-neutral-500 data-[state=checked]:bg-green-600"
 	style:width="{buttonWidth}rem"
 	use:melt={$switchRoot}>
 	<span

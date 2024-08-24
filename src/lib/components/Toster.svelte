@@ -79,19 +79,19 @@
 			out:fly={{ duration: 200, x: '100%' }}
 			class="rounded-lg bg-neutral-800 text-white shadow-md">
 			<div
-				class="relative flex w-[24rem] max-w-[calc(100vw-2rem)] items-center justify-between gap-4 p-5">
+				class="relative max-w-[calc(100vw-2rem)] w-[24rem] flex items-center justify-between gap-4 p-5">
 				<section>
 					<h3
 						use:melt={$title(id)}
-						class="flex items-center gap-2 text-md font-bold tracking-tight">
-						<span class="size-1.5 rounded-full inline-block {getColor(data.type)}" />
+						class="text-md flex items-center gap-2 font-bold tracking-tight">
+						<span class="inline-block size-1.5 rounded-full{getColor(data.type)}" />
 						{data.title}
 					</h3>
 					<div use:melt={$description(id)}>{data.content || ''}</div>
 				</section>
 				<button
 					use:melt={$close(id)}
-					class="absolute right-4 top-4 grid size-6 place-items-center rounded-full text-royal-indigo-300 hover:bg-royal-indigo-600/50">
+					class="text-royal-indigo-300 hover:bg-royal-indigo-600/50 absolute right-4 top-4 grid size-6 place-items-center rounded-full">
 					<svg
 						class="size-4"
 						xmlns="http://www.w3.org/2000/svg"

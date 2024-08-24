@@ -4,7 +4,7 @@ import { writable } from 'svelte/store';
 const { rpc } = await import('$lib/utilities/rpc');
 
 function createStore() {
-	let { set, subscribe } = writable<Profile[]>([]);
+	const { set, subscribe } = writable<Profile[]>([]);
 
 	const fetchAllMods = async () => {
 		console.log('Fetching profiles and storing them');

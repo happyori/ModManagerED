@@ -107,8 +107,8 @@
 {#if info}
 	<form
 		on:submit|preventDefault={handleSubmit}
-		class="flex flex-col w-auto mt-20 justify-center ml-14 space-y-4">
-		<h1 class="font-bold text-lg select-none">Edit mod</h1>
+		class="ml-14 mt-20 w-auto flex flex-col justify-center space-y-4">
+		<h1 class="select-none text-lg font-bold">Edit mod</h1>
 		<label
 			use:melt={$label}
 			class="labels">
@@ -123,7 +123,7 @@
 			<span>Path</span>
 			<div class="w-80 flex gap-2">
 				<input
-					class="fancy-input !w-auto flex-grow"
+					class="fancy-input flex-grow !w-auto"
 					bind:value={info.path}
 					placeholder="[Path to mod]" />
 				<FileSelectButton
@@ -132,21 +132,21 @@
 					{options}>
 					<p
 						slot="tooltip"
-						class="text-pretty w-60 select-none">
+						class="w-60 select-none text-pretty">
 						If you want to select a DLL mod make sure to tick the Is DLL toggle before you click
 					</p>
 				</FileSelectButton>
 			</div>
 		</label>
-		<div class="flex justify-between mr-[105px]">
+		<div class="mr-[105px] flex justify-between">
 			<label
-				class="tracking-tight text-sm font-bold select-none items-center flex"
+				class="flex select-none items-center text-sm font-bold tracking-tight"
 				for="dll">
 				<span>Is DLL</span>
 			</label>
 			<button
 				id="dll"
-				class="rounded-lg bg-neutral-100 size-6 text-black items-center flex justify-center"
+				class="size-6 flex items-center justify-center rounded-lg bg-neutral-100 text-black"
 				use:melt={$root}
 				type="button">
 				{#if $isChecked}
@@ -169,13 +169,13 @@
 			</button>
 		</div>
 		<div use:melt={$collapsible}>
-			<div class="flex justify-end group">
+			<div class="group flex justify-end">
 				<button
 					use:melt={$trigger}
-					class="flex flex-row justify-end items-center mr-28 space-x-2 mb-1.5"
+					class="mb-1.5 mr-28 flex flex-row items-center justify-end space-x-2"
 					type="button">
 					<span
-						class="text-royal-indigo-200 underline underline-offset-4 select-none group-hover:text-royal-indigo-300 transition-colors">
+						class="text-royal-indigo-200 group-hover:text-royal-indigo-300 select-none underline underline-offset-4 transition-colors">
 						Advanced Options
 					</span>
 					<svg
@@ -205,9 +205,9 @@
 						use:melt={$label}
 						class="labels text-sm">
 						<span>Deployment Path</span>
-						<div class="flex w-80 gap-2">
+						<div class="w-80 flex gap-2">
 							<input
-								class="fancy-input !w-auto flex-grow"
+								class="fancy-input flex-grow !w-auto"
 								bind:value={info.deployment_path}
 								placeholder="Leave empty for default" />
 							<FileSelectButton
@@ -218,16 +218,16 @@
 				</section>
 			{/if}
 		</div>
-		<div class="flex flex-row space-x-3 justify-end mr-28">
+		<div class="mr-28 flex flex-row justify-end space-x-3">
 			<button
 				type="submit"
-				class="outline outline-1 outline-green-400 text-base tracking-wide w-24 rounded hover:outline-green-700 transition-all duration-150 active:outline-royal-indigo-400">
+				class="active:outline-royal-indigo-400 w-24 rounded text-base tracking-wide outline-1 outline-green-400 outline transition-all duration-150 hover:outline-green-700">
 				Save
 			</button>
 			<button
 				on:click={handleDelete}
 				type="button"
-				class="outline outline-1 outline-rose-500 text-center tracking-wide w-24 rounded hover:outline-rose-700 transition-all duration-150 active:outline-royal-400">
+				class="active:outline-royal-400 w-24 rounded text-center tracking-wide outline-1 outline-rose-500 outline transition-all duration-150 hover:outline-rose-700">
 				Delete
 			</button>
 		</div>
@@ -238,7 +238,7 @@
 
 <style lang="postcss">
 	.fancy-input {
-		@apply shadow-inner shadow-zinc-500 rounded text-black w-80 px-2 py-1 tracking-tight text-sm focus:outline-none bg-zinc-50;
+		@apply 'shadow-inner shadow-zinc-500 rounded text-black w-80 px-2 py-1 tracking-tight text-sm focus:outline-none bg-zinc-50';
 	}
 	.labels {
 		display: grid;

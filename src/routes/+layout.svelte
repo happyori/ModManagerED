@@ -8,46 +8,46 @@
 </script>
 
 <Toster>
-	<div class="grid grid-cols-12 grid-rows-10 w-screen h-screen bg-zinc-900 text-white">
+	<div class="grid grid-cols-12 grid-rows-10 h-screen w-screen bg-zinc-900 text-white">
 		<div
 			id="action_corner"
-			class="col-span-3 row-span-3 flex z-10 rounded-br-3xl drop-shadow-xl justify-center items-center flex-col bg-zinc-700">
+			class="z-10 col-span-3 row-span-3 flex flex-col items-center justify-center rounded-br-3xl bg-zinc-700 drop-shadow-xl">
 			<enhanced:img
 				src="$lib/assets/eldenringlogo.png?w=100"
 				class="mb-4"
 				alt="Golden Order Logo" />
 			<ProfileSelector {...data} />
 		</div>
-		<div class="col-start-4 col-end-13 flex flex-col w-full">
-			<div class="flex flex-row justify-between w-full h-24 align-middle bg-zinc-800">
+		<div class="col-start-4 col-end-13 w-full flex flex-col">
+			<div class="h-24 w-full flex flex-row justify-between bg-zinc-800 align-middle">
 				<h1
-					class="bg-clip-text bg-gradient-to-br text-4xl text-transparent font-bold from-yellow-500 px-5 cursor-default select-none text-center self-center to-amber-600 to-60%">
+					class="cursor-default select-none self-center from-yellow-500 to-amber-600 to-60% bg-gradient-to-br bg-clip-text px-5 text-center text-4xl text-transparent font-bold">
 					Golden Order
 				</h1>
 			</div>
 		</div>
 
 		<nav
-			class="row-span-10 row-start-4 col-span-3 max-w-fit h-auto bg-zinc-800 gap-2 pt-5 pr-20 flex flex-col justify-between">
-			<div class="*:ml-2 *:mr-6 flex flex-col">
+			class="col-span-3 row-span-10 row-start-4 h-auto max-w-fit flex flex-col justify-between gap-2 bg-zinc-800 pr-20 pt-5">
+			<div class="flex flex-col *:ml-2 *:mr-6">
 				<a
-					class="text-white p-2"
+					class="p-2 text-white"
 					href="/profiles">
 					Profiles
 				</a>
 				<a
-					class="text-white p-2"
+					class="p-2 text-white"
 					href="/mods">
 					Mods
 				</a>
 			</div>
 			<a
 				href="/settings"
-				class="text-white p-2 ml-2 mr-4">
+				class="ml-2 mr-4 p-2 text-white">
 				Settings
 			</a>
 		</nav>
-		<div class="row-start-2 row-span-10 col-start-4 col-span-12 w-full h-full">
+		<div class="col-span-12 row-span-10 col-start-4 row-start-2 h-full w-full">
 			<slot />
 		</div>
 	</div>

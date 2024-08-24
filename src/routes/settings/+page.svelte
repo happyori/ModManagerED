@@ -46,8 +46,8 @@
 
 <form
 	on:submit|preventDefault={handleSubmit}
-	class="flex flex-col justify-center items-start gap-y-4 h-[80%] w-fit">
-	<h1 class="text-xl font-bold select-none">Settings</h1>
+	class="h-[80%] w-fit flex flex-col items-start justify-center gap-y-4">
+	<h1 class="select-none text-xl font-bold">Settings</h1>
 	<div class="flex flex-row items-center gap-x-2">
 		<label
 			for="path"
@@ -56,7 +56,7 @@
 		</label>
 		<input
 			id="path"
-			class="shadow-inner shadow-zinc-500 rounded text-black w-80 px-2 py-1.5 text-ellipsis tracking-tight text-sm focus:outline-none bg-zinc-50"
+			class="w-80 text-ellipsis rounded bg-zinc-50 px-2 py-1.5 text-sm text-black tracking-tight shadow-inner shadow-zinc-500 focus:outline-none"
 			placeholder="Path to ELDEN RING"
 			bind:value={instance.path} />
 		<FileSelectButton
@@ -65,16 +65,16 @@
 			<p slot="tooltip">Select ELDEN RING/Game folder (where the executable lives)</p>
 		</FileSelectButton>
 	</div>
-	<div class="flex flex-row gap-4 justify-end w-full">
+	<div class="w-full flex flex-row justify-end gap-4">
 		<button
 			type="submit"
-			class="outline outline-1 outline-green-400 text-base tracking-wide w-20 rounded hover:outline-green-700 transition-all duration-150 active:outline-royal-indigo-400">
+			class="active:outline-royal-indigo-400 w-20 rounded text-base tracking-wide outline-1 outline-green-400 outline transition-all duration-150 hover:outline-green-700">
 			Save
 		</button>
 		<button
 			type="button"
 			on:click={handleReset}
-			class="outline outline-1 outline-rose-500 text-center tracking-wide w-20 rounded hover:outline-rose-700 transition-all duration-150 active:outline-royal-400">
+			class="active:outline-royal-400 w-20 rounded text-center tracking-wide outline-1 outline-rose-500 outline transition-all duration-150 hover:outline-rose-700">
 			Reset
 		</button>
 	</div>

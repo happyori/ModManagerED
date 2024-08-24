@@ -35,7 +35,7 @@
 	type="button"
 	use:melt={$trigger}
 	on:click={handleOpenPath}
-	class="bg-neutral-100 font-bold tracking-wide text-royal-indigo-950 shadow-inner shadow-zinc-500 rounded px-4 py-1 hover:bg-neutral-300 hover:text-neutral-900 transition-colors">
+	class="text-royal-indigo-950 rounded bg-neutral-100 px-4 py-1 font-bold tracking-wide shadow-inner shadow-zinc-500 transition-colors hover:bg-neutral-300 hover:text-neutral-900">
 	Select
 </button>
 
@@ -43,7 +43,7 @@
 	<div
 		transition:fade={{ duration: 200 }}
 		use:melt={$content}
-		class="bg-neutral-100 px-4 py-2 rounded-lg text-sm shadow-lg shadow-black">
+		class="rounded-lg bg-neutral-100 px-4 py-2 text-sm shadow-black shadow-lg">
 		<span use:melt={$arrow} />
 		<slot name="tooltip">
 			<p>Use this to select a file/folder</p>

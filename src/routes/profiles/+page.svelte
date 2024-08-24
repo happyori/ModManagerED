@@ -6,17 +6,15 @@
 	let profiles = data.profiles;
 </script>
 
-<main class="pt-5 pl-2 flex flex-grow flex-col">
+<main class="flex flex-grow flex-col pl-2 pt-5">
 	{#each profiles as { name, id } (id)}
 		<a
 			href="/profiles/{id}"
-			class="bg-zinc-700 m-2 rounded px-5 py-2
-					first-letter:bg-clip-text first-letter:bg-gradient-to-b first-letter:from-fuchsia-400
-					first-letter:to-royal-indigo-300 first-letter:text-transparent first-letter:text-xl">
+			class="first-letter:to-royal-indigo-300 m-2 rounded bg-zinc-700 px-5 py-2 first-letter:from-fuchsia-400 first-letter:bg-gradient-to-b first-letter:bg-clip-text first-letter:text-xl first-letter:text-transparent">
 			{name}
 		</a>
 	{:else}
-		<p class="text-lg ml-2 text-left self-center">
+		<p class="ml-2 self-center text-left text-lg">
 			No profiles found D:
 			<br />
 			Checkout the button in bottom right corner to create new profile
@@ -26,7 +24,7 @@
 
 <a
 	href="profiles/create"
-	class="absolute bottom-2 right-2 bg-gradient-to-r from-cyan-600 to-royal-indigo-500 rounded-full shadow px-4 py-2.5 m-0">
+	class="to-royal-indigo-500 absolute bottom-2 right-2 m-0 rounded-full from-cyan-600 bg-gradient-to-r px-4 py-2.5 shadow">
 	+
 	<!-- TODO: Add + Icon and add tooltip -->
 </a>

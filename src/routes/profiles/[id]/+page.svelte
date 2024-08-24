@@ -54,7 +54,7 @@
 </script>
 
 {#if profile}
-	<main class="grid grid-cols-8 grid-rows-4 m-4 gap-2 items-center">
+	<main class="grid grid-cols-8 grid-rows-4 m-4 items-center gap-2">
 		<label
 			use:melt={$root}
 			class="col-span-4 text-lg"
@@ -63,16 +63,16 @@
 		</label>
 		<input
 			id="name"
-			class="font-bold ml-2 bg-transparent col-span-6 outline outline-2 outline-royal-indigo-400 rounded px-5 py-2"
+			class="outline-royal-indigo-400 col-span-6 ml-2 rounded bg-transparent px-5 py-2 font-bold outline-2 outline"
 			bind:value={profile.name} />
-		<div class="row-start-2 -col-start-1 col-span-3 p-2 flex flex-row gap-2 justify-around">
+		<div class="col-span-3 row-start-2 flex flex-row justify-around gap-2 p-2 -col-start-1">
 			<button
-				class="text-xl px-2 py-5 uppercase text-green-500"
+				class="px-2 py-5 text-xl text-green-500 uppercase"
 				on:click={handleSave}>
 				SAVE
 			</button>
 			<button
-				class="text-xl px-2 py-5 uppercase text-red-600"
+				class="px-2 py-5 text-xl text-red-600 uppercase"
 				on:click={handleDelete}>
 				DELETE
 			</button>
