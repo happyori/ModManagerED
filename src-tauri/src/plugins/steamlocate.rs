@@ -2,6 +2,7 @@ use std::path::PathBuf;
 use std::sync::Mutex;
 
 use steamlocate::SteamDir;
+use tracing::debug;
 
 #[derive(Debug)]
 pub struct SteamLocate {
@@ -23,6 +24,7 @@ impl SteamLocate {
     }
 
     pub fn get_elden_ring_install(&self) -> Option<PathBuf> {
+        debug!("Attempting to locate elden ring install");
         self.steam_dir
             .lock()
             .unwrap()

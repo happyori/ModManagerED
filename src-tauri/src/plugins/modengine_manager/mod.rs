@@ -4,7 +4,7 @@ use std::path::PathBuf;
 use anyhow::anyhow;
 use subprocess::Exec;
 use tauri::PathResolver;
-
+use tracing::{debug, instrument, trace};
 use crate::manager_error::ManagerResult;
 use crate::plugins::database::Database;
 use crate::plugins::modengine_manager::mod_engine_config::{Mod, ModEngineConfig};
@@ -16,14 +16,19 @@ mod mod_engine_config;
 pub struct ModEngineManager;
 
 impl ModEngineManager {
+    #[instrument]
     pub async fn launch_modded(profile: &Profile, database: &Database, path_resolver: PathResolver) -> ManagerResult<()> {
+        debug!(?profile, "Launching Modded Game");
         let mods = database.get_active_mods(profile.id.clone()).await?;
+        trace!(?mods, "Active mods");
         let (dll_paths, main) = Self::split_mods(mods);
         let config = ModEngineConfig::new(dll_paths, main);
+        trace!(?config);
         let data_file = path_resolver
             .app_local_data_dir()
             .ok_or(anyhow!("Could not get local data folder to store the configuration"))?
             .join(format!("profile_{}.toml", profile.id.id.to_string()));
+        trace!(config_location = ?data_file);
         let toml = toml::to_string(&config)?;
         fs::write(&data_file, toml)?;
         let launcher_path = Self::get_launcher_path(&path_resolver, database).await;
