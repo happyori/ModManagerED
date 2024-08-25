@@ -1,22 +1,25 @@
 <script lang="ts">
+	import ActionButton from '$lib/components/ActionButton.svelte';
+	import Icon from '@iconify/svelte';
 	import type { PageData } from './$types';
+	import { goto } from '$app/navigation';
 
 	export let data: PageData;
 
 	let profiles = data.profiles;
+
+	const handleCreate = async () => await goto('profiles/create');
 </script>
 
-<main class="pt-5 pl-2 flex flex-grow flex-col">
+<main class="flex flex-grow flex-col pl-2 pt-5 font-sans">
 	{#each profiles as { name, id } (id)}
 		<a
 			href="/profiles/{id}"
-			class="bg-zinc-700 m-2 rounded px-5 py-2
-					first-letter:bg-clip-text first-letter:bg-gradient-to-b first-letter:from-fuchsia-400
-					first-letter:to-royal-indigo-300 first-letter:text-transparent first-letter:text-xl">
+			class="profile">
 			{name}
 		</a>
 	{:else}
-		<p class="text-lg ml-2 text-left self-center">
+		<p class="ml-2 self-center text-left text-lg">
 			No profiles found D:
 			<br />
 			Checkout the button in bottom right corner to create new profile
@@ -24,9 +27,28 @@
 	{/each}
 </main>
 
-<a
-	href="profiles/create"
-	class="absolute bottom-2 right-2 bg-gradient-to-r from-cyan-600 to-royal-indigo-500 rounded-full shadow px-4 py-2.5 m-0">
-	+
-	<!-- TODO: Add + Icon and add tooltip -->
-</a>
+<ActionButton on:click={handleCreate}>
+	<Icon
+		icon="line-md:plus"
+		width="24"
+		height="24" />
+</ActionButton>
+
+<style lang="scss">
+	.profile {
+		margin: 0.5rem;
+		background-color: theme('colors.pallete.bg');
+		padding: {
+			top: 0.5rem;
+			bottom: 0.5rem;
+			left: 1.25rem;
+			right: 1.25rem;
+		}
+		border-radius: 0.25rem;
+
+		&::first-letter {
+			--at-apply: bg-gradient-from-pallete-accent to-pallete-complement bg-clip-text text-xl
+				font-bold bg-gradient-linear text-transparent;
+		}
+	}
+</style>

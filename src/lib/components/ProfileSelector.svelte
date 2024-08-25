@@ -3,9 +3,8 @@
 	import { fade } from 'svelte/transition';
 	import { tweened } from 'svelte/motion';
 	import { cubicInOut } from 'svelte/easing';
-	import { cn } from '$lib/utilities/cn';
 	import { ProfileStore, SelectedProfile } from '$lib/stores/profiles';
-	import { createSelect, createSeparator, melt } from '@melt-ui/svelte';
+	import { createSelect, melt } from '@melt-ui/svelte';
 	import { getContext } from 'svelte';
 	import { ToasterContext, type ToasterContextReturn } from './Toster.svelte';
 	import { createTauRPCProxy, type Profile } from '$generated/binding';
@@ -14,7 +13,7 @@
 
 	const {
 		elements: { menu, trigger, option },
-		states: { selectedLabel, open, selected },
+		states: { open, selected },
 		options: { disabled }
 	} = createSelect<Profile>({
 		positioning: {
@@ -36,11 +35,6 @@
 		easing: cubicInOut
 	});
 	$: rotation.set($open ? 180 : 0);
-	$: rounded = $open ? 'rounded-bl-none' : '';
-
-	const {
-		elements: { root: separator }
-	} = createSeparator({ decorative: true, orientation: 'vertical' });
 
 	const handlePlayClicked = async () => {
 		const rpc = await createTauRPCProxy();
@@ -57,12 +51,14 @@
 	};
 </script>
 
-<div class={cn('flex bg-green-700 rounded pr-1 items-center transition-colors', rounded)}>
+<div
+	class="mr-2 h-28px flex items-center rounded bg-pallete-bg transition-colors"
+	class:rounded-bl-none={$open}>
 	<div>
 		<button
-			class="flex flex-row items-center gap-1 pl-1.5"
+			class="flex flex-row select-none items-center gap-1 pl-1.5"
 			use:melt={$trigger}>
-			{$selectedLabel || 'Select Profile'}
+			{$SelectedProfile?.name || 'Select Profile'}
 			<svg
 				xmlns="http://www.w3.org/2000/svg"
 				width="1em"
@@ -82,24 +78,21 @@
 			<div
 				transition:fade={{ duration: 150 }}
 				use:melt={$menu}
-				class="z-10 flex max-h-[300px] px-0 pb-2 space-y-0.5 bg-green-700 flex-col overflow-y-auto rounded-lg rounded-t-none shadow">
+				class="z-10 max-h-[300px] flex flex-col overflow-y-auto rounded-lg rounded-t-none bg-pallete-bg px-0 pb-2 pt-1.5 shadow-xl space-y-0.5">
 				{#each profiles as profile (profile.id)}
 					<span
 						use:melt={$option({ value: profile, label: profile.name })}
-						class="text-white text-sm tracking-tight leading-tight cursor-pointer hover:bg-green-800 px-2 py-1">
+						class="cursor-pointer px-2 py-1 text-size-base text-pallete-text leading-tight transition-colors hover:text-pallete-accent">
 						{profile.name}
 					</span>
 				{/each}
 			</div>
 		{/if}
 	</div>
-	<span
-		use:melt={$separator}
-		class="bg-green-800 w-[3px] h-[80%]" />
 	<button
 		on:click={handlePlayClicked}
 		disabled={$SelectedProfile === undefined}
-		class="disabled:cursor-not-allowed">
+		class="ml-1 h-full w-5.5 flex items-center justify-center rounded-r bg-green-600 disabled:cursor-not-allowed disabled:bg-pallete-bg">
 		<Icon icon="ant-design:caret-right-outlined" />
 	</button>
 </div>

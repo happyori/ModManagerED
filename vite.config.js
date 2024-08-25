@@ -1,11 +1,17 @@
 import { defineConfig } from "vite";
 import { sveltekit } from "@sveltejs/kit/vite";
 import { enhancedImages } from "@sveltejs/enhanced-img";
+import UnoCSS from '@unocss/svelte-scoped/vite';
+import transformDirectives from '@unocss/transformer-directives';
 
 // https://vitejs.dev/config/
 export default defineConfig(async () => ({
   plugins: [
     enhancedImages(),
+    UnoCSS({
+      injectReset: '@unocss/reset/tailwind.css',
+      cssFileTransformers: [transformDirectives()]
+    }),
     sveltekit()
   ],
 

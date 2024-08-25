@@ -2,7 +2,7 @@ import { createTauRPCProxy, type GameInstance } from '$generated/binding';
 import { writable } from 'svelte/store';
 
 function createStore() {
-	let { set: innerSet, subscribe } = writable<GameInstance>();
+	const { set: innerSet, subscribe } = writable<GameInstance>();
 
 	const set = async (value: GameInstance) => {
 		const rpc = await createTauRPCProxy();

@@ -3,14 +3,20 @@ import { preprocessMeltUI, sequence } from '@melt-ui/pp';
 // so we will use adapter-static to prerender the app (SSG)
 // See: https://beta.tauri.app/start/frontend/sveltekit/ for more info
 import adapter from '@sveltejs/adapter-static';
-import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
+import { sveltePreprocess } from 'svelte-preprocess'
+
 /** @type {import('@sveltejs/kit').Config}*/
 const config = {
-	preprocess: sequence([vitePreprocess(), preprocessMeltUI()]),
+	preprocess: sequence([sveltePreprocess(), preprocessMeltUI()]),
 	kit: {
 		adapter: adapter(),
 		alias: {
 			$generated: 'src/generated/*'
+		}
+	},
+	vitePlugin: {
+		inspector: {
+			showToggleButton: 'active'
 		}
 	}
 };

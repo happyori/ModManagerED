@@ -23,6 +23,9 @@
         "message": false,
         "open": true,
         "save": false
+      },
+      "window": {
+        "setDecorations": true
       }
     },
     "windows": [
@@ -30,7 +33,8 @@
         "title": "Elden Ring Mod Manager",
         "width": 800,
         "height": 600,
-        "transparent": true
+        "transparent": true,
+        "decorations": false
       }
     ],
     "security": {

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { findProfileById, ProfileStore } from '$lib/stores/profiles';
+	import { findProfileById, ProfileStore, SelectedProfile } from '$lib/stores/profiles';
 	import { getContext } from 'svelte';
 	import type { PageData } from './$types';
 	import { melt, createLabel } from '@melt-ui/svelte';
@@ -22,6 +22,9 @@
 		const rpc = await createTauRPCProxy();
 		try {
 			await rpc.api.profile.update(profile);
+			if ($SelectedProfile && $SelectedProfile.id === profile.id) {
+				$SelectedProfile = profile;
+			}
 			await invalidate('profiles:data');
 			addSuccessfulToast('Successfully updated the profile');
 		} catch (error) {
@@ -54,30 +57,44 @@
 </script>
 
 {#if profile}
-	<main class="grid grid-cols-8 grid-rows-4 m-4 gap-2 items-center">
-		<label
-			use:melt={$root}
-			class="col-span-4 text-lg"
-			for="name">
-			Profile Name:
-		</label>
-		<input
-			id="name"
-			class="font-bold ml-2 bg-transparent col-span-6 outline outline-2 outline-royal-indigo-400 rounded px-5 py-2"
-			bind:value={profile.name} />
-		<div class="row-start-2 -col-start-1 col-span-3 p-2 flex flex-row gap-2 justify-around">
+	<main class="flex flex-col gap-2 space-y-2xl">
+		<h1 class="mt-24 golden-text text-lg">Edit Profile</h1>
+		<div class="flex flex-row items-center">
+			<label
+				use:melt={$root}
+				class="labels"
+				for="name">
+				<span>Name:</span>
+				<input
+					id="name"
+					class="fancy-input"
+					bind:value={profile.name} />
+			</label>
+		</div>
+		<div class="mr-150px flex flex-row justify-end space-x-3">
 			<button
-				class="text-xl px-2 py-5 uppercase text-green-500"
-				on:click={handleSave}>
-				SAVE
+				on:click={handleSave}
+				class="w-24 rounded text-base tracking-wide outline-1 outline-green-400 outline transition-all duration-150 active:outline-pallete-accent hover:outline-green-700">
+				Save
 			</button>
 			<button
-				class="text-xl px-2 py-5 uppercase text-red-600"
-				on:click={handleDelete}>
-				DELETE
+				on:click={handleDelete}
+				class="w-24 rounded text-center tracking-wide outline-1 outline-rose-500 outline transition-all duration-150 active:outline-pallete-accent hover:outline-rose-700">
+				Delete
 			</button>
 		</div>
 	</main>
 {:else}
 	<span>Failed to fetch profile! Something is wrong with this id: {data.id}</span>
 {/if}
+
+<style lang="scss">
+	.labels {
+		display: grid;
+		grid-template-columns: 120px auto 1fr;
+		--at-apply: tracking-tight text-sm items-center;
+		span {
+			font-weight: bold;
+		}
+	}
+</style>

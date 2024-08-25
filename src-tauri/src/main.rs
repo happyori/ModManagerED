@@ -14,7 +14,7 @@ use taurpc::Router;
 use window_shadows::set_shadow;
 #[cfg(target_os = "macos")]
 use window_vibrancy::{apply_vibrancy, NSVisualEffectMaterial};
-use window_vibrancy::apply_mica;
+use window_vibrancy::{apply_mica};
 
 use crate::commands::{
     GameInstanceApi, GameInstanceApiImpl,
@@ -58,7 +58,7 @@ async fn main() -> anyhow::Result<()> {
                 #[cfg(any(windows, target_os = "macos"))]
                 set_shadow(window, true).map_err(|e| anyhow!(e.to_string()))?;
                 #[cfg(target_os = "windows")]
-                apply_mica(window, None)?;
+                apply_mica(window, Some(true))?;
                 #[cfg(target_os = "macos")]
                 apply_vibrancy(window, NSVisualEffectMaterial::HudWindow, None, None)?;
             }

@@ -19,16 +19,16 @@
 	}
 </script>
 
-<main class="flex flex-col justify-center items-center w-full h-full">
-	<div class="flex flex-col items-center justify-start w-fit gap-2">
-		<h1 class="text-2xl font-bold tracking-wide text-left">Profile Creation</h1>
+<main class="h-full w-full flex flex-col items-center justify-center">
+	<div class="w-fit flex flex-col items-center justify-start gap-2">
+		<h1 class="text-left text-2xl font-bold tracking-wide">Profile Creation</h1>
 		<input
 			type="text"
 			bind:value={profile_name}
 			placeholder="Profile Name"
-			class="outline outline-2 outline-royal-indigo-400 px-2 bg-zinc-800 m-4" />
+			class="m-4 rounded bg-zinc-800 px-2 py-0.5 outline-2 outline-pallete-accent outline" />
 		<button
-			class="rounded outline-royal-indigo-800 outline-2 self-end mr-4 outline px-4 py-2"
+			class="mr-4 self-end rounded px-4 py-2 outline-2 outline-pallete-accent outline transition-colors hover:bg-pallete-accent hover:text-black"
 			on:click={createProfile}>
 			Create
 		</button>
