@@ -47,9 +47,10 @@
         "msi",
         "nsis"
       ],
-      "identifier": "com.github.happyori.modmanagered",
+      "identifier": "GoldenOrder",
       "resources": [
-        "modengine/*"
+        "modengine/*",
+        "database_settings.yml"
       ],
       "icon": [
         "icons/32x32.png",

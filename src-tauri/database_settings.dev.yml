@@ -1,0 +1,11 @@
+dev:
+  base_path: "C:\\Projects\\ModManagerED"
+  filename: "data.db"
+  name: "ModManagerED"
+  namespace: "ModManagerData"
+
+release:
+  base_path: null
+  filename: "GoldenOrder.db"
+  name: "GoldenOrder"
+  namespace: "GoldenOrderData"

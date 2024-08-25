@@ -3,25 +3,37 @@
 
 use std::env;
 use std::fs::create_dir_all;
+use std::path::PathBuf;
 use std::sync::Arc;
 
 use anyhow::anyhow;
 use figment::{
     Figment,
-    providers::{Format, Yaml}
+    providers::{Format, Yaml},
 };
-use tauri::{Assets, Config, Context, Manager};
-use tauri::api::path::app_log_dir;
+use tauri::{
+    api::path::app_log_dir,
+    Assets,
+    Config,
+    Context,
+    Env,
+    Manager,
+    utils::platform::resource_dir,
+    utils::resources::resource_relpath
+};
 use taurpc::Router;
 use tracing::{debug, error, info, instrument, Level};
 use tracing_appender::non_blocking::WorkerGuard;
-use tracing_subscriber::{filter, Layer};
-use tracing_subscriber::layer::SubscriberExt;
-use tracing_subscriber::util::SubscriberInitExt;
+use tracing_subscriber::{
+    filter,
+    Layer,
+    layer::SubscriberExt,
+    util::SubscriberInitExt,
+};
 use window_shadows::set_shadow;
 #[cfg(target_os = "macos")]
 use window_vibrancy::{apply_vibrancy, NSVisualEffectMaterial};
-use window_vibrancy::{apply_mica};
+use window_vibrancy::apply_mica;
 
 use crate::commands::{
     GameInstanceApi, GameInstanceApiImpl,
@@ -46,13 +58,21 @@ const ENV: &str = "release";
 #[instrument(skip(context))]
 async fn run<A: Assets>(context: Context<A>) -> anyhow::Result<()> {
     debug!("Settings up database config with profile: {ENV}");
+    let database_settings_file = if ENV == "release" {
+        resource_dir(context.package_info(), &Env::default())
+            .map(|path| path.join(resource_relpath("database_settings.yml".as_ref())))?
+    } else {
+        PathBuf::from("database_settings.dev.yml")
+    };
+    debug!("Attempting to setup figment with {:#?}", &database_settings_file);
     let figment = Figment::new()
-        .merge(Yaml::file("database_settings.yml").nested())
+        .merge(Yaml::file(database_settings_file).nested())
         .select(ENV);
-    debug!("Setup figment, \n {:#?}", &figment);
+    debug!("Figment setup, \n {:#?}", &figment);
+
 
     debug!("Initializing Database");
-    let database = Arc::new(Database::new(figment.extract()?).await?);
+    let database = Arc::new(Database::new(figment.extract()?, context.config()).await?);
     info!("Database initialized");
     debug!("Initializing Steam Locate");
     let steam_locate = Arc::new(SteamLocate::init()?);

@@ -7,12 +7,13 @@ use serde::de::DeserializeOwned;
 use surrealdb::engine::local::{Db, RocksDb};
 use surrealdb::opt::{Config, IntoResource};
 use surrealdb::Surreal;
-use tauri::api::path::{cache_dir, local_data_dir};
+use tauri::api::path::{app_cache_dir, app_local_data_dir};
 use tracing::{debug, instrument};
 use crate::database_id::DbID;
 use crate::manager_error::ManagerResult;
 use crate::plugins::database_trait::{DatabaseTrait, IntoRefResource};
 use crate::schema::{GameInstance, ModInfo};
+use tauri::Config as TauriConfig;
 
 #[derive(Debug)]
 pub(crate) struct Database {
@@ -20,12 +21,12 @@ pub(crate) struct Database {
 }
 
 impl Database {
-    #[instrument]
-    pub async fn new(config: DatabaseConfig) -> Result<Self> {
+    #[instrument(skip(tauri_config))]
+    pub async fn new(config: DatabaseConfig, tauri_config: &TauriConfig) -> Result<Self> {
         let data_dir = config.base_path
             .clone()
-            .or(local_data_dir())
-            .or(cache_dir())
+            .or(app_local_data_dir(tauri_config))
+            .or(app_cache_dir(tauri_config))
             .ok_or(anyhow!("Database Directory should have been located"))?
             .join(&config.database_filename);
 
