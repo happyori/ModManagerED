@@ -67,7 +67,7 @@
 
 <div
 	use:melt={$root}
-	class="relative h-full w-full p-4 text-black">
+	class="relative h-full w-full p-4 text-pallete-text">
 	<section
 		use:melt={$viewport}
 		class="h-full w-full">
@@ -77,7 +77,7 @@
 			{#each mods as mod (mod.id)}
 				<div class="flex flex-row">
 					<a
-						class="flex shrink flex-col rounded-md bg-neutral-200/40 px-4 py-px hover:bg-neutral-200/70"
+						class="flex shrink flex-col rounded-md bg-pallete-darker/70 px-4 py-1 text-pallete-text transition hover:bg-pallete-darker/40"
 						href="/mods/{mod.id}">
 						<span
 							class="first-letter:text-royal-indigo-400 text-lg font-bold tracking-tighter capitalize">

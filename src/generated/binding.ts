@@ -28,7 +28,7 @@ export type TauRpcProfileApiInputTypes = { proc_name: "create"; input_type: { __
 
 export type TauRpcProfileApiOutputTypes = { proc_name: "create"; output_type: Profile } | { proc_name: "update"; output_type: Profile | null } | { proc_name: "delete"; output_type: Profile | null } | { proc_name: "fetch_all"; output_type: Profile[] }
 
-const ARGS_MAP = {"api.mod":"{\"create\":[\"data\"],\"update\":[\"data\"],\"delete\":[\"data\"],\"fetch_all\":[]}","api.profile":"{\"create\":[\"data\"],\"fetch_all\":[],\"update\":[\"data\"],\"delete\":[\"data\"]}","api.game":"{\"fetch\":[],\"reset\":[],\"update\":[\"data\"],\"upsert\":[\"data\"]}","api.mod.manage":"{\"enable\":[\"profile_id\",\"mod_id\"],\"launch_game\":[\"profile\"],\"disable\":[\"profile_id\",\"mod_id\"],\"fetch_active\":[\"profile_id\"]}"}
+const ARGS_MAP = {"api.mod.manage":"{\"disable\":[\"profile_id\",\"mod_id\"],\"launch_game\":[\"profile\"],\"enable\":[\"profile_id\",\"mod_id\"],\"fetch_active\":[\"profile_id\"]}","api.game":"{\"fetch\":[],\"reset\":[],\"update\":[\"data\"],\"upsert\":[\"data\"]}","api.mod":"{\"delete\":[\"data\"],\"update\":[\"data\"],\"create\":[\"data\"],\"fetch_all\":[]}","api.profile":"{\"update\":[\"data\"],\"delete\":[\"data\"],\"fetch_all\":[],\"create\":[\"data\"]}"}
 import { createTauRPCProxy as createProxy } from "taurpc"
 
 export const createTauRPCProxy = () => createProxy<Router>(ARGS_MAP)

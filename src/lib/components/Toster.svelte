@@ -13,19 +13,6 @@
 		addFailedToast: (title: string, content?: string) => Toast<ToastData>;
 	};
 	type ToastType = 'error' | 'info' | 'warning' | 'success';
-	const getColor = (type: ToastType) => {
-		switch (type) {
-			default:
-			case 'error':
-				return 'bg-red-500';
-			case 'info':
-				return 'bg-blue-500';
-			case 'warning':
-				return 'bg-orange-500';
-			case 'success':
-				return 'bg-green-500';
-		}
-	};
 </script>
 
 <script lang="ts">
@@ -61,6 +48,13 @@
 		});
 	};
 
+	const typeColors: Record<ToastType, string> = {
+		error: 'bg-red-500',
+		info: 'bg-blue-500',
+		warning: 'bg-orange-500',
+		success: 'bg-green-500'
+	};
+
 	setContext(ToasterContext, {
 		addToast,
 		addFailedToast,
@@ -84,14 +78,14 @@
 					<h3
 						use:melt={$title(id)}
 						class="text-md flex items-center gap-2 font-bold tracking-tight">
-						<span class="inline-block size-1.5 rounded-full{getColor(data.type)}" />
+						<span class="{typeColors[data.type]} inline-block size-1.5 rounded-full" />
 						{data.title}
 					</h3>
 					<div use:melt={$description(id)}>{data.content || ''}</div>
 				</section>
 				<button
 					use:melt={$close(id)}
-					class="text-royal-indigo-300 hover:bg-royal-indigo-600/50 absolute right-4 top-4 grid size-6 place-items-center rounded-full">
+					class="absolute right-4 top-4 grid size-6 place-items-center rounded-full text-pallete-accent transition-colors hover:bg-pallete-accent/50">
 					<svg
 						class="size-4"
 						xmlns="http://www.w3.org/2000/svg"

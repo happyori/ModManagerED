@@ -1,17 +1,23 @@
 <script lang="ts">
-	import { cn } from '$lib/utilities/cn';
+	import { spring } from 'svelte/motion';
 
-	const classNames = '';
-	export { classNames as class };
+	const rotation = spring(0, {
+		damping: 0.12,
+		precision: 0.01,
+		stiffness: 0.05
+	});
 
-	const maincss = cn(
-		'absolute bottom-2 right-2 bg-gradient-to-r from-cyan-600 to-royal-indigo-500 rounded-full shadow px-4 py-2.5 m-0',
-		classNames
-	);
+	const handleMouseOver = () => rotation.set(90);
+	const handleMouseOut = () => rotation.set(0);
 </script>
 
 <button
 	on:click
-	class={maincss}>
-	<slot />
+	on:mouseover={handleMouseOver}
+	on:focus={handleMouseOver}
+	on:mouseleave={handleMouseOut}
+	class="absolute bottom-2 right-2 m-0 size-10 flex items-center justify-center rounded-full bg-gradient-from-pallete-accent to-pallete-complement bg-gradient-linear shape-br text-pallete-text shadow">
+	<span style="transform: rotate({$rotation}deg);">
+		<slot />
+	</span>
 </button>

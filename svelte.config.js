@@ -16,7 +16,7 @@ const config = {
 	},
 	vitePlugin: {
 		inspector: {
-			showToggleButton: 'always'
+			showToggleButton: 'active'
 		}
 	}
 };

@@ -26,9 +26,9 @@
 			type="text"
 			bind:value={profile_name}
 			placeholder="Profile Name"
-			class="outline-royal-indigo-400 m-4 bg-zinc-800 px-2 outline-2 outline" />
+			class="m-4 rounded bg-zinc-800 px-2 py-0.5 outline-2 outline-pallete-accent outline" />
 		<button
-			class="outline-royal-indigo-800 mr-4 self-end rounded px-4 py-2 outline-2 outline"
+			class="mr-4 self-end rounded px-4 py-2 outline-2 outline-pallete-accent outline transition-colors hover:bg-pallete-accent hover:text-black"
 			on:click={createProfile}>
 			Create
 		</button>

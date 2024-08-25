@@ -1,16 +1,21 @@
 <script lang="ts">
+	import ActionButton from '$lib/components/ActionButton.svelte';
+	import Icon from '@iconify/svelte';
 	import type { PageData } from './$types';
+	import { goto } from '$app/navigation';
 
 	export let data: PageData;
 
 	let profiles = data.profiles;
+
+	const handleCreate = async () => await goto('profiles/create');
 </script>
 
-<main class="flex flex-grow flex-col pl-2 pt-5">
+<main class="flex flex-grow flex-col pl-2 pt-5 font-sans">
 	{#each profiles as { name, id } (id)}
 		<a
 			href="/profiles/{id}"
-			class="first-letter:to-royal-indigo-300 m-2 rounded bg-zinc-700 px-5 py-2 first-letter:from-fuchsia-400 first-letter:bg-gradient-to-b first-letter:bg-clip-text first-letter:text-xl first-letter:text-transparent">
+			class="profile">
 			{name}
 		</a>
 	{:else}
@@ -22,9 +27,28 @@
 	{/each}
 </main>
 
-<a
-	href="profiles/create"
-	class="to-royal-indigo-500 absolute bottom-2 right-2 m-0 rounded-full from-cyan-600 bg-gradient-to-r px-4 py-2.5 shadow">
-	+
-	<!-- TODO: Add + Icon and add tooltip -->
-</a>
+<ActionButton on:click={handleCreate}>
+	<Icon
+		icon="line-md:plus"
+		width="24"
+		height="24" />
+</ActionButton>
+
+<style lang="scss">
+	.profile {
+		margin: 0.5rem;
+		background-color: theme('colors.pallete.bg');
+		padding: {
+			top: 0.5rem;
+			bottom: 0.5rem;
+			left: 1.25rem;
+			right: 1.25rem;
+		}
+		border-radius: 0.25rem;
+
+		&::first-letter {
+			--at-apply: bg-gradient-from-pallete-accent to-pallete-complement bg-clip-text text-xl
+				font-bold bg-gradient-linear text-transparent;
+		}
+	}
+</style>

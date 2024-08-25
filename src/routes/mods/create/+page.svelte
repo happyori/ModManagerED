@@ -1,15 +1,14 @@
 <script lang="ts">
 	import FileSelectButton from '$lib/components/FileSelectButton.svelte';
 
-	import { createCheckbox, createCollapsible, createLabel, melt } from '@melt-ui/svelte';
-	import { cubicInOut } from 'svelte/easing';
-	import { tweened } from 'svelte/motion';
-	import { slide, fade } from 'svelte/transition';
+	import { createCheckbox, createLabel, melt } from '@melt-ui/svelte';
+	import { fade } from 'svelte/transition';
 	import type { OpenDialogOptions } from '@tauri-apps/api/dialog';
 	import { getContext } from 'svelte';
 	import { ToasterContext, type ToasterContextReturn } from '$lib/components/Toster.svelte';
 	import { goto } from '$app/navigation';
 	import { createTauRPCProxy, type ModInfoDataModel } from '$generated/binding';
+	import Collapse from '$lib/components/Collapse.svelte';
 
 	const { addToast } = getContext<ToasterContextReturn>(ToasterContext);
 
@@ -52,41 +51,30 @@
 		title: `Please select the ${info.is_dll ? 'DLL mod' : 'mod folder'}`
 	};
 
-	let chevronRotation = tweened(180, {
-		duration: 200,
-		easing: cubicInOut
-	});
-
 	const {
 		elements: { root, input },
 		helpers: { isChecked }
 	} = createCheckbox();
 
 	const {
-		elements: { root: collapsible, trigger, content },
-		states: { open }
-	} = createCollapsible({
-		forceVisible: true
-	});
-	const {
 		elements: { root: label }
 	} = createLabel();
 
 	$: info.is_dll = $isChecked;
-	$: chevronRotation.set($open ? 0 : 180);
 </script>
 
 <!-- TODO: Make adding dll and folder mods separate using the tabs or select or something i dunno -->
 <!-- TODO: Info Tooltips -->
 <form
 	on:submit|preventDefault={handleSubmit}
-	class="ml-14 mt-20 w-auto flex flex-col justify-center space-y-4">
-	<h1 class="select-none text-lg font-bold">Add mod</h1>
+	class="ml-14 mt-20 w-fit flex flex-col justify-center space-y-4">
+	<h1 class="select-none golden-text text-lg font-bold">Add mod</h1>
 	<label
 		use:melt={$label}
 		class="labels">
 		<span>Name</span>
 		<input
+			class="fancy-input"
 			bind:value={info.name}
 			placeholder="[Cool name]" />
 	</label>
@@ -111,7 +99,7 @@
 			</FileSelectButton>
 		</div>
 	</label>
-	<div class="mr-[105px] flex justify-between">
+	<div class="flex justify-between">
 		<label
 			class="flex select-none items-center text-sm font-bold tracking-tight"
 			for="dll">
@@ -124,7 +112,7 @@
 			type="button">
 			{#if $isChecked}
 				<svg
-					transition:fade={{ duration: 70 }}
+					transition:fade={{ duration: 90 }}
 					xmlns="http://www.w3.org/2000/svg"
 					width="1em"
 					height="1em"
@@ -141,83 +129,47 @@
 			<input use:melt={$input} />
 		</button>
 	</div>
-	<div use:melt={$collapsible}>
-		<div class="group flex justify-end">
-			<button
-				use:melt={$trigger}
-				class="mb-1.5 mr-28 flex flex-row items-center justify-end space-x-2"
-				type="button">
-				<span
-					class="text-royal-indigo-200 group-hover:text-royal-indigo-300 select-none underline underline-offset-4 transition-colors">
-					Advanced Options
-				</span>
-				<svg
-					class="text-royal-indigo-200 group-hover:text-royal-indigo-300 transition-colors"
-					xmlns="http://www.w3.org/2000/svg"
-					width="1em"
-					height="1em"
-					style="transform: rotate({$chevronRotation}deg);"
-					viewBox="0 0 24 24">
-					<path
-						fill="none"
-						stroke="currentColor"
-						stroke-linecap="round"
-						stroke-linejoin="round"
-						stroke-width="2"
-						d="m17 14l-5-5l-5 5" />
-				</svg>
-			</button>
-		</div>
+	<Collapse title="Advanced Options">
+		<label
+			use:melt={$label}
+			class="labels text-sm">
+			<span>Deployment Path</span>
+			<div class="w-80 flex gap-2">
+				<input
+					class="fancy-input flex-grow !w-auto"
+					bind:value={info.deployment_path}
+					placeholder="Leave empty for default" />
+				<FileSelectButton
+					bind:value={info.deployment_path}
+					options={{ directory: true, title: 'Select deployment location' }} />
+			</div>
+		</label>
+	</Collapse>
 
-		{#if $open}
-			<section
-				transition:slide
-				class="mt-2"
-				use:melt={$content}>
-				<label
-					use:melt={$label}
-					class="labels text-sm">
-					<span>Deployment Path</span>
-					<div class="w-80 flex gap-2">
-						<input
-							class="fancy-input flex-grow !w-auto"
-							bind:value={info.deployment_path}
-							placeholder="Leave empty for default" />
-						<FileSelectButton
-							bind:value={info.deployment_path}
-							options={{ directory: true, title: 'Select deployment location' }} />
-					</div>
-				</label>
-			</section>
-		{/if}
-	</div>
-	<div class="mr-28 flex flex-row justify-end space-x-3">
+	<div class="flex flex-row justify-end space-x-3">
 		<button
 			type="submit"
-			class="active:outline-royal-indigo-400 w-24 rounded text-base tracking-wide outline-1 outline-green-400 outline transition-all duration-150 hover:outline-green-700">
+			class="w-24 rounded text-base tracking-wide outline-1 outline-green-400 outline transition-all duration-150 active:outline-pallete-accent hover:outline-green-700">
 			Add
 		</button>
 		<a
 			href="/mods"
-			class="active:outline-royal-400 w-24 rounded text-center tracking-wide outline-1 outline-rose-500 outline transition-all duration-150 hover:outline-rose-700">
+			class="w-24 rounded text-center tracking-wide outline-1 outline-rose-500 outline transition-all duration-150 active:outline-pallete-accent hover:outline-rose-700">
 			Cancel
 		</a>
 	</div>
 </form>
 
-<style lang="postcss">
+<style lang="scss">
 	.fancy-input {
-		@apply 'shadow-inner shadow-zinc-500 rounded text-black w-80 px-2 py-1 tracking-tight text-sm focus:outline-none bg-zinc-50';
+		--at-apply: 'shadow-inner shadow-zinc-500 rounded text-black w-80 px-2 py-1 tracking-tight text-sm focus:outline-none bg-zinc-50';
 	}
 	.labels {
 		display: grid;
 		grid-template-columns: 120px auto 1fr;
-		@apply tracking-tight text-sm items-center;
-		& > span {
+		--at-apply: tracking-tight text-sm items-center;
+		span {
 			font-weight: bold;
-		}
-		& > input {
-			@apply fancy-input;
 		}
 	}
 </style>

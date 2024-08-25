@@ -7,9 +7,9 @@
 	let thumbSize = 1.25;
 
 	let thumbPosition = spring(buttonPadding, {
-		damping: 0.24,
-		precision: 0.12,
-		stiffness: 0.3
+		damping: 0.265,
+		precision: 0.09,
+		stiffness: 0.2
 	});
 
 	export let disable = false;
@@ -40,7 +40,7 @@
 </script>
 
 <button
-	class="bg-royal-indigo-400 relative h-6 cursor-default rounded-full transition-colors data-[disabled=true]:bg-neutral-500 data-[state=checked]:bg-green-600"
+	class="relative h-6 cursor-default rounded-full bg-pallete-accent transition-colors data-[disabled=true]:bg-neutral-500 data-[state=checked]:bg-green-600"
 	style:width="{buttonWidth}rem"
 	use:melt={$switchRoot}>
 	<span

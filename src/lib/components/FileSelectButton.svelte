@@ -35,7 +35,7 @@
 	type="button"
 	use:melt={$trigger}
 	on:click={handleOpenPath}
-	class="text-royal-indigo-950 rounded bg-neutral-100 px-4 py-1 font-bold tracking-wide shadow-inner shadow-zinc-500 transition-colors hover:bg-neutral-300 hover:text-neutral-900">
+	class="rounded bg-neutral-100 px-4 py-1 text-pallete-accent font-bold tracking-wide shadow-inner shadow-zinc-500 transition-colors hover:bg-neutral-300 hover:text-neutral-900">
 	Select
 </button>
 
