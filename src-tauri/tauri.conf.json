@@ -7,7 +7,7 @@
   },
   "package": {
     "productName": "goldenorder",
-    "version": "0.1.0"
+    "version": "0.2.0"
   },
   "tauri": {
     "allowlist": {
@@ -34,7 +34,8 @@
         "width": 800,
         "height": 600,
         "transparent": true,
-        "decorations": false
+        "decorations": false,
+        "theme": "Dark"
       }
     ],
     "security": {
@@ -42,7 +43,10 @@
     },
     "bundle": {
       "active": true,
-      "targets": "all",
+      "targets": [
+        "msi",
+        "nsis"
+      ],
       "identifier": "com.github.happyori.modmanagered",
       "resources": [
         "modengine/*"
@@ -53,7 +57,22 @@
         "icons/128x128@2x.png",
         "icons/icon.icns",
         "icons/icon.ico"
-      ]
+      ],
+      "windows": {
+        "allowDowngrades": true,
+        "certificateThumbprint": null,
+        "digestAlgorithm": "SHA-256",
+        "nsis": null,
+        "signCommand": null,
+        "timestampUrl": null,
+        "tsp": false,
+        "webviewFixedRuntimePath": null,
+        "webviewInstallMode": {
+          "silent": true,
+          "type": "embedBootstrapper"
+        },
+        "wix": null
+      }
     }
   },
   "plugins": {}

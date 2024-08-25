@@ -11,7 +11,14 @@ function createStore() {
 		return fetched;
 	};
 
-	return { subscribe, fetchAllMods };
+	const fetchActiveMods = async (profileId: string) => {
+		const rpc = await createTauRPCProxy();
+		const active = await rpc.api.mod.manage.fetch_active(profileId);
+
+		return active;
+	};
+
+	return { subscribe, fetchAllMods, fetchActiveMods };
 }
 
 export const ModInfoStore = createStore();

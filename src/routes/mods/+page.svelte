@@ -7,6 +7,11 @@
 	import ModContent from '$lib/components/ModContent.svelte';
 	import { ExtraModStore, MainModStore } from '$lib/stores/mods';
 	import Icon from '@iconify/svelte';
+	import type { PageData } from './$types';
+	import { SelectedProfile } from '$lib/stores/profiles';
+	import type { ModInfo } from '$generated/binding';
+
+	export let data: PageData;
 
 	const tabs = [
 		{ id: 'mods', title: 'Main Mods' },
@@ -25,6 +30,16 @@
 		duration: 250,
 		easing: cubicInOut
 	});
+
+	let activeMods: Promise<ModInfo[]>;
+
+	$: {
+		if ($SelectedProfile) {
+			activeMods = data.fetch_active($SelectedProfile.id);
+		} else {
+			activeMods = Promise.resolve([]);
+		}
+	}
 
 	const handleCreate = () => goto('/mods/create');
 </script>
@@ -54,13 +69,17 @@
 		use:melt={$content('mods')}
 		aria-label="Main Mods"
 		class="h-full w-full bg-pallete-bg">
-		<ModContent modStore={MainModStore} />
+		<ModContent
+			modStore={MainModStore}
+			{activeMods} />
 	</div>
 	<div
 		use:melt={$content('extra')}
 		aria-label="Extra Mods"
 		class="h-full w-full bg-pallete-bg">
-		<ModContent modStore={ExtraModStore} />
+		<ModContent
+			modStore={ExtraModStore}
+			{activeMods} />
 	</div>
 </div>
 <ActionButton on:click={handleCreate}>

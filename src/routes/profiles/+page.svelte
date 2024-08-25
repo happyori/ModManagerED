@@ -14,7 +14,7 @@
 <main class="flex flex-grow flex-col pl-2 pt-5 font-sans">
 	{#each profiles as { name, id } (id)}
 		<a
-			href="/profiles/{id}"
+			href="/profiles/edit?id={id}"
 			class="profile">
 			{name}
 		</a>

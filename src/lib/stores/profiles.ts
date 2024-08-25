@@ -1,13 +1,11 @@
-import type { Profile } from '$generated/binding';
+import { createTauRPCProxy, type Profile } from '$generated/binding';
 import { writable } from 'svelte/store';
-
-const { rpc } = await import('$lib/utilities/rpc');
 
 function createStore() {
 	const { set, subscribe } = writable<Profile[]>([]);
 
 	const fetchAllMods = async () => {
-		console.log('Fetching profiles and storing them');
+		const rpc = await createTauRPCProxy();
 		const fetched = await rpc.api.profile.fetch_all();
 		set(fetched);
 		return fetched;

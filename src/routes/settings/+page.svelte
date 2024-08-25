@@ -41,8 +41,6 @@
 		directory: true,
 		title: 'Select the Elden Ring Game folder (where the exe lives)'
 	};
-
-	$: console.log(instance);
 </script>
 
 <form

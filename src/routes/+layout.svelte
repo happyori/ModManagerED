@@ -1,10 +1,3 @@
-<script
-	lang="ts"
-	context="module">
-	const { getCurrent } = await import('@tauri-apps/api/window');
-	await getCurrent().setDecorations(true);
-</script>
-
 <script lang="ts">
 	import Navigation from '$lib/components/Navigation.svelte';
 	import ProfileSelector from '$lib/components/ProfileSelector.svelte';

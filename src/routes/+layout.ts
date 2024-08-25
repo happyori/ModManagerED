@@ -6,11 +6,15 @@ import type { LayoutLoad } from './$types';
 export const prerender = true;
 export const ssr = false;
 
-export const load = (async ({ depends }) => {
+export const load = (async ({ depends, untrack }) => {
 	const { ProfileStore } = await import('$lib/stores/profiles');
+	const { getCurrent } = await import('@tauri-apps/api/window');
 	depends('profiles:data');
 	const profiles = await ProfileStore.fetchAllMods();
-	console.log(profiles);
+
+	untrack(() => {
+		getCurrent().setDecorations(true);
+	});
 
 	return { profiles };
 }) satisfies LayoutLoad;

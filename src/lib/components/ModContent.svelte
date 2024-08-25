@@ -1,11 +1,5 @@
-<script
-	lang="ts"
-	context="module">
-	const { rpc } = await import('$lib/utilities/rpc');
-</script>
-
 <script lang="ts">
-	import { type ModInfo } from '$generated/binding';
+	import { createTauRPCProxy, type ModInfo } from '$generated/binding';
 	import Switch from '$lib/components/Switch.svelte';
 	import { ToasterContext, type ToasterContextReturn } from '$lib/components/Toster.svelte';
 	import { SelectedProfile } from '$lib/stores/profiles';
@@ -14,19 +8,18 @@
 	import type { Readable } from 'svelte/store';
 
 	export let modStore: Readable<ModInfo[]>;
+	export let activeMods: Promise<ModInfo[]>;
 
 	type WithEnabled<T> = T & { enabled: boolean };
 	let mods: WithEnabled<ModInfo>[] = $modStore.map((v) => ({ ...v, enabled: false }));
 
 	const fetchModEnabledStatus = () => {
-		if (!$SelectedProfile) return;
-		rpc.api.mod.manage.fetch_active($SelectedProfile.id).then((enabledMods) => {
+		activeMods.then((enabledMods) => {
 			for (const enabledMod of enabledMods) {
 				let mod = mods.find((mod) => mod.id === enabledMod.id);
 				if (mod === undefined) continue;
 				mod.enabled = true;
 			}
-			console.log(mods);
 			mods = [...mods];
 		});
 	};
@@ -47,13 +40,12 @@
 		if (profile === undefined) {
 			return false;
 		}
+		const rpc = await createTauRPCProxy();
 
 		try {
 			if (check) {
-				console.log(`Mod: ${id} activated for ${profile?.name}`);
 				await rpc.api.mod.manage.enable(profile.id, id);
 			} else {
-				console.log(`Mod: ${id} deactivated for ${profile?.name}`);
 				await rpc.api.mod.manage.disable(profile.id, id);
 			}
 		} catch (e) {
@@ -78,7 +70,7 @@
 				<div class="flex flex-row">
 					<a
 						class="flex shrink flex-col rounded-md bg-pallete-darker/70 px-4 py-1 text-pallete-text transition hover:bg-pallete-darker/40"
-						href="/mods/{mod.id}">
+						href="/mods/edit?id={mod.id}">
 						<span
 							class="first-letter:text-royal-indigo-400 text-lg font-bold tracking-tighter capitalize">
 							{mod.name}
